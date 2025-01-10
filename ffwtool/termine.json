@@ -6,6 +6,14 @@
       "veranstalter": "Alle",
       "Gruppe": "Alle",
       "send": "0"
+    },
+    {
+      "id": "600",
+      "datum": "2025-02-07 20:00:00",
+      "name": "Fahrzeugkunde und Ausleuchten",
+      "veranstalter": "Harry und Valentin",
+      "Gruppe": "Alle",
+      "send": "0"
     }],
   "stand": "2024-10-06 20:00:00",
   "gruppen": {
