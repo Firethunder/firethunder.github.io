@@ -14,12 +14,107 @@
       "veranstalter": "Harry und Valentin",
       "Gruppe": "Alle",
       "send": "0"
-    }],
-  "stand": "2025-01-11 00:40:00",
+    },
+    {
+      "id": "601",
+      "datum": "2025-02-06 19:00:00",
+      "name": "Jugendfeuerwehr Quizapp + Knoten",
+      "veranstalter": "Johannes, Robert, Bernd H., Rainer, Harry, Darron",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "602",
+      "datum": "2025-02-07 20:00:00",
+      "name": "Fahrzeugkunde + Ausleuchten",
+      "veranstalter": "Harry, Valentin",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "603",
+      "datum": "2025-02-12 20:00:00",
+      "name": "Übungsbeteiligung 2024 – Kartbahn Sulz",
+      "veranstalter": "Robert, Michael, Rainer, Steffen, Darron, Steven, Daniel, Manuel, Valentin",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "604",
+      "datum": "2025-03-06 19:00:00",
+      "name": "Jugendfeuerwehr Quizapp + Knoten",
+      "veranstalter": "Darron, Michael, Harry, Steven, Robert, Bernd H.",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "605",
+      "datum": "2025-03-07 20:00:00",
+      "name": "Einweisung TS8 + Atemschutz",
+      "veranstalter": "Rainer, Steven",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "606",
+      "datum": "2025-03-14 20:00:00",
+      "name": "Hauptversammlung Isingen",
+      "veranstalter": "Alle",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "607",
+      "datum": "2025-03-18 20:00:00",
+      "name": "Absturzsicherung",
+      "veranstalter": "Harry, Tobias",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "608",
+      "datum": "2025-03-22 13:00:00",
+      "name": "KFV-Versammlung Onstmetting",
+      "veranstalter": "Führung",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "609",
+      "datum": "2025-04-04 20:00:00",
+      "name": "Funkübung",
+      "veranstalter": "Robert, Bernd H.",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "610",
+      "datum": "2025-04-08 20:00:00",
+      "name": "Führungsgruppe Rosenfeld",
+      "veranstalter": "Steven, Tobias, Harry, Manuel",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "611",
+      "datum": "2025-04-12 12:00:00",
+      "name": "Jubiläum – Handwerkerversper in Bickelsberg",
+      "veranstalter": "Alle",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": "612",
+      "datum": "2025-04-15 20:00:00",
+      "name": "Gesamtausschusssitzung Heiligenzimmern",
+      "veranstalter": "Führung",
+      "Gruppe": "Alle",
+      "send": "0"
+    }
+  ],
+  "stand": "2025-02-08 00:00:00",
   "gruppen": {
-    "A": [
-    ],
-    "B": [
-    ]
+    "A": [],
+    "B": []
   }
 }
