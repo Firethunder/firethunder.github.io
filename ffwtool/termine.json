@@ -57,7 +57,7 @@
     },
     {
       "id": "606",
-      "datum": "2025-03-14 20:00:00",
+      "datum": "2025-03-14 19:00:00",
       "name": "Hauptversammlung Isingen",
       "veranstalter": "Alle",
       "Gruppe": "Alle",
@@ -112,7 +112,7 @@
       "send": "0"
     }
   ],
-  "stand": "2025-02-08 00:00:00",
+  "stand": "2025-03-10 00:00:00",
   "gruppen": {
     "A": [],
     "B": []
