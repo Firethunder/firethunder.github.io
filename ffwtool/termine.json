@@ -1,5 +1,6 @@
 {
-  "termine":     [{
+  "termine": [
+    {
       "id": "599",
       "datum": "2024-10-26 15:00:00",
       "name": "Kameradschaftsabend",
@@ -110,9 +111,57 @@
       "veranstalter": "Führung",
       "Gruppe": "Alle",
       "send": "0"
+    },
+    {
+      "id": 613,
+      "datum": "2025-05-30T18:00",
+      "name": "Maibaum",
+      "veranstalter": "Alle",
+      "gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 614,
+      "datum": "2025-05-01T12:00",
+      "name": "Maihockete Täbingen",
+      "veranstalter": "Alle",
+      "gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 615,
+      "datum": "2025-05-02T20:00",
+      "name": "Löschangriff Staffel",
+      "veranstalter": "Gruppe A/Steven, Kevin",
+      "gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 616,
+      "datum": "2025-05-02T20:00",
+      "name": "Selbstretten",
+      "veranstalter": "Gruppe B/Harry, Tobias",
+      "gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 617,
+      "datum": "2025-05-16T19:30",
+      "name": "Zugübung Rosenfeld/Heilizgenzimmern",
+      "veranstalter": "3-48: Steffen, Kevin, Patrick, Daniel, Darron, Sven. 3-11: Steven, Tobias, Bernd H.",
+      "gruppe": "Zug",
+      "send": "0"
+    },
+    {
+      "id": 618,
+      "datum": "2025-05-27T20:00",
+      "name": "Atemschutzstrecke Sulz",
+      "veranstalter": "Steffen, Kai, Manuel, Robert, Patrick, Tobias, Darron, Sven",
+      "gruppe": "Alle",
+      "send": "0"
     }
   ],
-  "stand": "2025-03-10 00:00:00",
+  "stand": "2025-04-22 00:00:00",
   "gruppen": {
     "A": [],
     "B": []
