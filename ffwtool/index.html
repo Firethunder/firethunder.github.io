@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+    
+<head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Termin-Erfassungsmaske</title>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    
+</head>
+<body class="w3-container">
+
+    <h1 class="w3-text-red">Termin-Erfassungsmaske</h1>
+    
+    <table id="termineTable" class="w3-table-all w3-hoverable w3-card-4">
+        <thead>
+            <tr class="w3-red">
+                <th>Datum</th>
+                <th>Name</th>
+                <th>Veranstalter</th>
+                <th>Gruppe</th>
+                <th>Aktion</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot id="addTerminForm">
+            <tr>
+                <td><input type="datetime-local" class="datum w3-input" value="" id="datum"></td>
+                <td><input type="text" class="name w3-input" value="" id="name"></td>
+                <td><input type="text" class="veranstalter w3-input" value="" id="veranstalter"></td>
+                <td>
+                    <select class="gruppe w3-select w3-center" id="gruppe">
+                        <option value="Alle">Alle</option>
+                        <option value="Zug" >Zug</option>
+                        <option value="HoSi">HoSi</option>
+                    </select>
+                </td>
+                <td>
+                    <button onclick="addTermin()" class="w3-button w3-small w3-border"><i class="fa fa-save"></i>Hinzufügen</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+       
+    <button id="showJsonButton" class="w3-button w3-blue w3-margin-top">Zeige JSON</button>
+    <pre id="jsonOutput" class="w3-code w3-border w3-padding"></pre>
+    
+    <script src="script.js"></script>
+    </body>
+    
