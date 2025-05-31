@@ -1,3 +1,15 @@
+document.addEventListener("DOMContentLoaded", async () => {
+  const response = await fetch('termine.json');
+  data = await response.json();
+
+  data.termine = data.termine.map(t => ({
+    ...t,
+    Gruppe: t.Gruppe || t.gruppe || "Alle"
+  }));
+
+  renderTable();
+});
+/*
 // Initiales JSON-Objekt
 let data = {
     "termine": [
@@ -118,7 +130,7 @@ let data = {
         "datum": "2025-05-30 18:00:00",
         "name": "Maibaum",
         "veranstalter": "Alle",
-        "gruppe": "Alle",
+        "Gruppe": "Alle",
         "send": "0"
       },
       {
@@ -126,7 +138,7 @@ let data = {
         "datum": "2025-05-01 12:00:00",
         "name": "Maihockete Täbingen",
         "veranstalter": "Alle",
-        "gruppe": "Alle",
+        "Gruppe": "Alle",
         "send": "0"
       },
       {
@@ -134,7 +146,7 @@ let data = {
         "datum": "2025-05-02 20:00:00",
         "name": "Löschangriff Staffel",
         "veranstalter": "Gruppe A/Steven, Kevin",
-        "gruppe": "Alle",
+        "Gruppe": "Alle",
         "send": "0"
       },
       {
@@ -142,7 +154,7 @@ let data = {
         "datum": "2025-05-02 20:00:00",
         "name": "Selbstretten",
         "veranstalter": "Gruppe B/Harry, Tobias",
-        "gruppe": "Alle",
+        "Gruppe": "Alle",
         "send": "0"
       },
       {
@@ -150,7 +162,7 @@ let data = {
         "datum": "2025-05-16 19:30:00",
         "name": "Zugübung Rosenfeld/Heilizgenzimmern",
         "veranstalter": "3-48: Steffen, Kevin, Patrick, Daniel, Darron, Sven. 3-11: Steven, Tobias, Bernd H.",
-        "gruppe": "Zug",
+        "Gruppe": "Zug",
         "send": "0"
       },
       {
@@ -158,7 +170,7 @@ let data = {
         "datum": "2025-05-27 20:00:00",
         "name": "Atemschutzstrecke Sulz",
         "veranstalter": "Steffen, Kai, Manuel, Robert, Patrick, Tobias, Darron, Sven",
-        "gruppe": "Alle",
+        "Gruppe": "Alle",
         "send": "0"
       },
       {
@@ -166,7 +178,7 @@ let data = {
         "datum": "2025-05-28 20:00:00",
         "name": "Atemschutzstrecke Sulz",
         "veranstalter": "Rainer, Volker, Harry, Kevin, Steven, Michael, Valentin",
-        "gruppe": "Alle",
+        "Gruppe": "Alle",
         "send": "0"
       }
     ],
@@ -176,77 +188,104 @@ let data = {
       "B": []
     }
   };
-let idx = 0;
+  */
+  let idx = 0;
 
-// Funktion zum Rendern der Termine in die Tabelle
-function renderTable() {
-    const $tableBody = $("#termineTable tbody");
-    $tableBody.empty();
-
-    data.termine.forEach((termin, index) => {
-        if (idx < termin.id) {
-            idx = termin.id;
-        }
-        const row = `<tr>
-            <td><input type="datetime-local" class="datum w3-input" value="${termin.datum}" onchange="updateTermin(${index})"></td>
-            <td><input type="text" class="name w3-input" value="${termin.name}" onchange="updateTermin(${index})"></td>
-            <td><input type="text" class="veranstalter w3-input" value="${termin.veranstalter}" onchange="updateTermin(${index})"></td>
-            <td>
-                <select class="gruppe w3-select w3-center">
-                    <option value="Alle" ${termin.gruppe === "Alle" ? "selected" : ""}>Alle</option>
-                    <option value="Zug" ${termin.gruppe === "Zug" ? "selected" : ""}>Zug</option>
-                    <option value="HoSi" ${termin.gruppe === "HoSi" ? "selected" : ""}>HoSi</option>
-                </select>
-            </td>
-            <td>
-                <button onclick="deleteTermin(${index})" class="w3-button w3-small"><i class="fa fa-trash"></i></button>
-            </td>
-        </tr>`;
-        $tableBody.append(row);
-    });
-}
-
-function updateTermin(index) {
-  const row = $("#termineTable tbody tr").eq(index);
-  const updatedTermin = {
-      id: data.termine[index].id,
-      datum: row.find(".datum").val(),
-      name: row.find(".name").val(),
-      veranstalter: row.find(".veranstalter").val(),
-      Gruppe: row.find(".gruppe").val(),
-      send: '0'
-  };
-  data.termine[index] = updatedTermin;
-}
-
-// Funktion zum Löschen eines Termins
-function deleteTermin(index) {
-    data.termine.splice(index, 1);
-    renderTable();
-}
-
-function addTermin() {
-  const row = $("#termineTable tfoot tr");
-    const newTermin = {
-        id: ++idx,
-        datum: row.find(".datum").val(),
-        name: row.find(".name").val(),
-        veranstalter: row.find(".veranstalter").val(),
-        Gruppe: row.find(".gruppe").val(),
-        send: '0' 
-    };
-    data.termine.push(newTermin);
-    row.find(".datum").val('')
-    row.find(".name").val('')
-    row.find(".veranstalter").val('')
-    row.find(".gruppe").val('')
-    renderTable();
-}
-
-// Funktion zum Anzeigen des JSON-Outputs
-$("#showJsonButton").on("click", function() {
-    $("#jsonOutput").text(JSON.stringify(data, null, 2));
-});
-
-// Initiales Rendern der Tabelle
-renderTable();
+  function renderTable() {
+      const tableBody = document.querySelector("#termineTable tbody");
+      tableBody.innerHTML = "";
+  
+      data.termine.forEach((termin, index) => {
+          if (idx < termin.id) {
+              idx = termin.id;
+          }
+  
+          const row = document.createElement("tr");
+          row.innerHTML = `
+              <td><input type="datetime-local" class="datum w3-input" value="${termin.datum}"></td>
+              <td><input type="text" class="name w3-input" value="${termin.name}"></td>
+              <td><input type="text" class="veranstalter w3-input" value="${termin.veranstalter}"></td>
+              <td>
+                  <select class="gruppe w3-select w3-center">
+                      <option value="Alle" ${termin.Gruppe === "Alle" ? "selected" : ""}>Alle</option>
+                      <option value="Zug" ${termin.Gruppe === "Zug" ? "selected" : ""}>Zug</option>
+                      <option value="HoSi" ${termin.Gruppe === "HoSi" ? "selected" : ""}>HoSi</option>
+                  </select>
+              </td>
+              <td>
+                  <button class="w3-button w3-small delete-btn"><i class="fa fa-trash"></i></button>
+              </td>
+          `;
+  
+          // Input-Änderungen
+          row.querySelectorAll("input, select").forEach(input =>
+              input.addEventListener("change", () => updateTermin(index))
+          );
+  
+          // Löschen
+          row.querySelector(".delete-btn").addEventListener("click", () => deleteTermin(index));
+  
+          tableBody.appendChild(row);
+      });
+  }
+  
+  function updateTermin(index) {
+      const row = document.querySelectorAll("#termineTable tbody tr")[index];
+  
+      data.termine[index] = {
+          id: data.termine[index].id,
+          datum: row.querySelector(".datum").value,
+          name: row.querySelector(".name").value,
+          veranstalter: row.querySelector(".veranstalter").value,
+          Gruppe: row.querySelector(".gruppe").value,
+          send: "0"
+      };
+  }
+  
+  function deleteTermin(index) {
+      data.termine.splice(index, 1);
+      renderTable();
+  }
+  
+  function addTermin() {
+      const row = document.querySelector("#termineTable tfoot tr");
+      const now = new Date(row.querySelector(".datum").value);
+      const pad = n => n.toString().padStart(2, '0');
+      const formattedDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    
+      const newTermin = {
+          id: ++idx,
+          datum: formattedDate,
+          name: row.querySelector(".name").value,
+          veranstalter: row.querySelector(".veranstalter").value,
+          Gruppe: row.querySelector(".gruppe").value,
+          send: "0"
+      };
+  
+      data.termine.push(newTermin);
+  
+      row.querySelector(".datum").value = '';
+      row.querySelector(".name").value = '';
+      row.querySelector(".veranstalter").value = '';
+      row.querySelector(".gruppe").value = '';
+  
+      renderTable();
+  }
+  
+  document.getElementById("showJsonButton").addEventListener("click", () => {
+      document.getElementById("jsonOutput").textContent = JSON.stringify(data, null, 2);
+  });
+  
+  function downloadJson() {
+    const now = new Date();
+    const pad = n => n.toString().padStart(2, '0');
+    const formattedDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    data.stand = formattedDate;
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "termine.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
