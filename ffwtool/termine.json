@@ -213,7 +213,7 @@
       "datum": "2025-06-24 20:00:00",
 	  "name": "Absturzsicherung",
 	  "veranstalter": "Harry/Tobi",
-      "Gruppe": "Alle",
+      "Gruppe": "Hosi",
       "send": "0"
     },
     {
@@ -257,7 +257,7 @@
       "send": "0"
     }
   ],
-  "stand": "2025-04-22 01:00:00",
+  "stand": "2025-06-01 01:00:00",
   "Gruppen": {
     "A": [],
     "B": []
