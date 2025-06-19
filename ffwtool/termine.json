@@ -218,7 +218,7 @@
     },
     {
       "id": "626",
-      "datum": "2025-07-04T20:00",
+      "datum": "2025-07-04 20:00",
       "name": "Arbeitsdienst und Grillen",
       "veranstalter": "Alle",
       "Gruppe": "Alle",
@@ -250,7 +250,7 @@
     },
     {
       "id": "630",
-      "datum": "2025-07-25T20:00",
+      "datum": "2025-07-25 20:00",
       "name": "Sägen unter Spannung mit AH(Eigene Schnittschutzhose)",
       "veranstalter": "Michael, Rainer",
       "Gruppe": "Alle",
@@ -274,7 +274,7 @@
     },
     {
       "id": 633,
-      "datum": "2025-09-12T19:30",
+      "datum": "2025-09-12 19:30",
       "name": "Zugübung Leidrigen/Täbingen",
       "veranstalter": "3-48: Tobias, Volker, Daniel, Robert, Sven, Rainer\n3-11: Bernd H., Manuel, Steven",
       "Gruppe": "Zug",
@@ -298,7 +298,7 @@
     },
     {
       "id": 636,
-      "datum": "2025-10-10T20:00",
+      "datum": "2025-10-10 20:00",
       "name": "Leitern/Knoten",
       "veranstalter": "Gruppe A: Kai, Steffen",
       "Gruppe": "Alle",
