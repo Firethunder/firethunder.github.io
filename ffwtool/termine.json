@@ -327,6 +327,110 @@
       "veranstalter": "Alle",
       "Gruppe": "Alle",
       "send": "0"
+    },
+    {
+      "id": 640,
+      "datum": "2025-10-24 18:00:00",
+      "name": "Aufbau SkiOpening",
+      "veranstalter": "Alle",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 641,
+      "datum": "2025-10-25 20:00:00",
+      "name": "SkiOpening",
+      "veranstalter": "Alle",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 642,
+      "datum": "2025-10-26 19:00:00",
+      "name": "Abbau SkiOpening",
+      "veranstalter": "Alle",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 643,
+      "datum": "2025-11-07 20:00:00",
+      "name": "GA in Bickelsberg",
+      "veranstalter": "Führung & Darron",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 644,
+      "datum": "2025-11-14 20:00:00",
+      "name": "Erste Hilfe",
+      "veranstalter": "DRK",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 645,
+      "datum": "2025-11-15 14:00:00",
+      "name": "Herbstübung in Hlgz",
+      "veranstalter": "Alle",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 646,
+      "datum": "2025-11-16 10:00:00",
+      "name": "Volkstrauertag",
+      "veranstalter": "Valentin, Volker, Matze",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 647,
+      "datum": "2025-11-28 20:00:00",
+      "name": "GF/ZF Besprechung",
+      "veranstalter": "Alle GF",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 648,
+      "datum": "2025-12-05 20:00:00",
+      "name": "QuizApp",
+      "veranstalter": "Bernd & Daniel",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 649,
+      "datum": "2025-12-09 20:00:00",
+      "name": "Führungsgruppe Rosenfeld",
+      "veranstalter": "Steven, Harry, Tobias, Manuel",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 650,
+      "datum": "2025-12-23 20:00:00",
+      "name": "Dienstplanaufstellung & Weihnachtsfeier",
+      "veranstalter": "Valentin, Darron, Bernd H., Fynn",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 651,
+      "datum": "2026-01-09 20:00:00",
+      "name": "Geräteprüfung & Hydrantenkontrolle",
+      "veranstalter": "Steven & Harry",
+      "Gruppe": "Alle",
+      "send": "0"
+    },
+    {
+      "id": 652,
+      "datum": "2026-01-16 20:00:00",
+      "name": "Abteilungsversammlung",
+      "veranstalter": "Alle",
+      "Gruppe": "Alle",
+      "send": "0"
     }
   ],
   "stand": "2025-06-19 23:36:47",
