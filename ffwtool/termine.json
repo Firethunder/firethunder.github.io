@@ -597,7 +597,7 @@
       "datum": "2026-06-23 20:00:00",
       "name": "Absturzsicherung",
       "veranstalter": "Harry / Tobi",
-      "Gruppe": "HoSi",
+      "Gruppe": "Hosi",
       "send": "0"
     },
     {
@@ -685,7 +685,7 @@
       "datum": "2026-09-22 20:00:00",
       "name": "Absturzsicherung",
       "veranstalter": "Harry / Tobi",
-      "Gruppe": "HoSi",
+      "Gruppe": "Hosi",
       "send": "0"
     },
     {
@@ -793,7 +793,7 @@
       "send": "0"
     }
   ],
-  "stand": "2026-01-18 23:00:00",
+  "stand": "2026-01-18 22:42:22",
   "Gruppen": {
     "A": [],
     "B": []
