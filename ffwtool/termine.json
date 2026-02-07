@@ -458,7 +458,7 @@
     },
     {
       "id": 656,
-      "datum": "2026-03-13T20:00",
+      "datum": "2026-03-13 20:00:00",
       "name": "AGT-Training Fit for Firefighting",
       "veranstalter": "Kai / Michael / Steffen",
       "Gruppe": "Alle",
@@ -466,7 +466,7 @@
     },
     {
       "id": 657,
-      "datum": "2026-03-17T20:00",
+      "datum": "2026-03-17 20:00:00",
       "name": "FüGrp Rosenfeld",
       "veranstalter": "Harry / Tobi / Steven / Manuel / Kevin",
       "Gruppe": "Alle",
@@ -474,7 +474,7 @@
     },
     {
       "id": 658,
-      "datum": "2026-04-10T20:00",
+      "datum": "2026-04-10 20:00:00",
       "name": "BMA Blickle",
       "veranstalter": "Hardy Brucklacher + Steven",
       "Gruppe": "Alle",
@@ -482,7 +482,7 @@
     },
     {
       "id": 659,
-      "datum": "2026-04-11T08:00",
+      "datum": "2026-04-11 08:00:00",
       "name": "Roter Heuberg",
       "veranstalter": "Staffel",
       "Gruppe": "Alle",
@@ -490,7 +490,7 @@
     },
     {
       "id": 660,
-      "datum": "2026-04-14T20:00",
+      "datum": "2026-04-14 20:00:00",
       "name": "GA in Higz",
       "veranstalter": "Führung",
       "Gruppe": "Alle",
@@ -498,7 +498,7 @@
     },
     {
       "id": 661,
-      "datum": "2026-04-16T19:00",
+      "datum": "2026-04-16 19:00:00",
       "name": "JuFeu Leitern + Knoten",
       "veranstalter": "Bernd H. / Valentin",
       "Gruppe": "Alle",
@@ -506,7 +506,7 @@
     },
     {
       "id": 662,
-      "datum": "2026-04-18T13:00",
+      "datum": "2026-04-18 13:00:00",
       "name": "KFV-Versammlung Dormettingen",
       "veranstalter": "Führung",
       "Gruppe": "Alle",
@@ -522,7 +522,7 @@
     },
     {
       "id": 664,
-      "datum": "2026-05-07T19:00",
+      "datum": "2026-05-07 19:00:00",
       "name": "JuFeu Leitern + Knoten",
       "veranstalter": "Tobias / Amelie",
       "Gruppe": "Alle",
@@ -530,7 +530,7 @@
     },
     {
       "id": 665,
-      "datum": "2026-05-08T20:00",
+      "datum": "2026-05-08 20:00:00",
       "name": "Gr. A Löschangriff Staffel",
       "veranstalter": "Harry / Tobi",
       "Gruppe": "Alle",
@@ -538,7 +538,7 @@
     },
     {
       "id": 666,
-      "datum": "2026-05-08T20:00",
+      "datum": "2026-05-08 20:00:00",
       "name": "Gr. B AGT-Sammelplatz",
       "veranstalter": "Steven / Kevin",
       "Gruppe": "Alle",
@@ -546,7 +546,7 @@
     },
     {
       "id": 667,
-      "datum": "2026-05-13T20:00",
+      "datum": "2026-05-13 20:00:00",
       "name": "Atemschutzstrecke Sulz",
       "veranstalter": "6x PA",
       "Gruppe": "Alle",
@@ -554,7 +554,7 @@
     },
     {
       "id": 668,
-      "datum": "2026-05-19T20:00",
+      "datum": "2026-05-19 20:00:00",
       "name": "FüGrp Rosenfeld",
       "veranstalter": "Harry / Tobi / Steven / Manuel / Kevin",
       "Gruppe": "Alle",
@@ -562,7 +562,7 @@
     },
     {
       "id": 669,
-      "datum": "2026-06-12T20:00",
+      "datum": "2026-06-12 20:00:00",
       "name": "Gr. B Löschangriff Staffel",
       "veranstalter": "Harry / Tobi",
       "Gruppe": "Alle",
@@ -570,7 +570,7 @@
     },
     {
       "id": 670,
-      "datum": "2026-06-12T20:00",
+      "datum": "2026-06-12 20:00:00",
       "name": "Gr. A AGT-Sammelplatz",
       "veranstalter": "Steven / Kevin",
       "Gruppe": "Alle",
@@ -578,7 +578,7 @@
     },
     {
       "id": 671,
-      "datum": "2026-06-19T20:00",
+      "datum": "2026-06-19 20:00:00",
       "name": "Zugübung Rosfe/Hlgzm (3-48)",
       "veranstalter": "Michael / Robert / Rainer / Kai / Volker / Patrick",
       "Gruppe": "Zug",
@@ -610,7 +610,7 @@
     },
     {
       "id": 675,
-      "datum": "2026-07-07T20:00",
+      "datum": "2026-07-07 20:00:00",
       "name": "Besprechung Kdt. + Abt-Kdt.",
       "veranstalter": "Steven",
       "Gruppe": "Alle",
@@ -618,7 +618,7 @@
     },
     {
       "id": 676,
-      "datum": "2026-07-07T20:00",
+      "datum": "2026-07-07 20:00:00",
       "name": "Atemschutzstrecke Sulz",
       "veranstalter": "6x PA",
       "Gruppe": "Alle",
@@ -626,7 +626,7 @@
     },
     {
       "id": 677,
-      "datum": "2026-07-10T20:00",
+      "datum": "2026-07-10 20:00:00",
       "name": "Zugübung Bickelsberg/Brittheim (3-48)",
       "veranstalter": "Manuel / Kevin / Daniel / Steffen / Amelie / Fynn",
       "Gruppe": "Alle",
@@ -634,7 +634,7 @@
     },
     {
       "id": 678,
-      "datum": "2026-07-10T20:00",
+      "datum": "2026-07-10 20:00:00",
       "name": "Zugübung Bickelsberg/Brittheim (3-11)",
       "veranstalter": "Tobi / Harry / Steven",
       "Gruppe": "Alle",
@@ -642,7 +642,7 @@
     },
     {
       "id": 679,
-      "datum": "2026-07-14T20:00",
+      "datum": "2026-07-14 20:00:00",
       "name": "GA in Leidr",
       "veranstalter": "Führung",
       "Gruppe": "Alle",
@@ -650,7 +650,7 @@
     },
     {
       "id": 680,
-      "datum": "2026-07-24T19:00",
+      "datum": "2026-07-24 19:00:00",
       "name": "Brandcontainer Netze BW (KW30)",
       "veranstalter": "Alle AGT",
       "Gruppe": "Alle",
@@ -658,7 +658,7 @@
     },
     {
       "id": 681,
-      "datum": "2026-09-04T20:00",
+      "datum": "2026-09-04 20:00:00",
       "name": "Rettung aus unwegsamem Gelände",
       "veranstalter": "Rainer / Robert",
       "Gruppe": "Alle",
@@ -666,7 +666,7 @@
     },
     {
       "id": 682,
-      "datum": "2026-09-11T19:30",
+      "datum": "2026-09-11 19:30:00",
       "name": "Zugübung Leidringen/Täbingen (3-48)",
       "veranstalter": "Tobias / Volker / Valentin / Robert / Sven / Nico",
       "Gruppe": "Zug",
@@ -698,7 +698,7 @@
     },
     {
       "id": 686,
-      "datum": "2026-10-02T20:00",
+      "datum": "2026-10-02 20:00:00",
       "name": "Saugstellen/Tiefbrunnen in Brittheim",
       "veranstalter": "Valentin / Fynn",
       "Gruppe": "Alle",
@@ -722,7 +722,7 @@
     },
     {
       "id": 689,
-      "datum": "2026-11-06T19:00",
+      "datum": "2026-11-06 19:00:00",
       "name": "GF/ZF- Besprechung in Ros",
       "veranstalter": "Alle GF",
       "Gruppe": "Alle",
@@ -730,7 +730,7 @@
     },
     {
       "id": 690,
-      "datum": "2026-11-13T20:00",
+      "datum": "2026-11-13 20:00:00",
       "name": "Erste Hilfe in Rosenfeld",
       "veranstalter": "Steven",
       "Gruppe": "Alle",
@@ -746,7 +746,7 @@
     },
     {
       "id": 692,
-      "datum": "2026-11-20T20:00",
+      "datum": "2026-11-20 20:00:00",
       "name": "GA-Sitzung in Brittheim Bürgerhaus",
       "veranstalter": "Führung / Bernd H. / Rainer / Amelie",
       "Gruppe": "Alle",
@@ -754,7 +754,7 @@
     },
     {
       "id": 693,
-      "datum": "2026-12-08T20:00",
+      "datum": "2026-12-08 20:00:00",
       "name": "Quizapp TM Teil 2 (Rechtsgrundlagen)",
       "veranstalter": "Steven / Tobias / Harry / Manuel / Kevin",
       "Gruppe": "Alle",
@@ -762,7 +762,7 @@
     },
     {
       "id": 694,
-      "datum": "2026-12-08T20:00",
+      "datum": "2026-12-08 20:00:00",
       "name": "FüGrp Rosenfeld",
       "veranstalter": "Steven / Tobias / Harry / Manuel / Kevin",
       "Gruppe": "Alle",
@@ -778,7 +778,7 @@
     },
     {
       "id": 696,
-      "datum": "2027-01-08T20:00",
+      "datum": "2027-01-08 20:00:00",
       "name": "Geräteprüfung",
       "veranstalter": "Steven / Harry",
       "Gruppe": "Alle",
