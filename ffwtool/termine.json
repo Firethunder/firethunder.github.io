@@ -793,9 +793,34 @@
       "send": "0"
     }
   ],
-  "stand": "2026-01-18 22:42:22",
+  "stand": "2026-02-16 22:42:22",
   "Gruppen": {
-    "A": [],
-    "B": []
+    "A": [
+      "Michael Baumann",
+      "Steven Leopold",
+      "Tobias Kühne",
+      "Valentin Weisser",
+      "Rainer Hengsteler",
+      "Volker Weisser",
+      "Matthias Weisser",
+      "Kevin Leopold",
+      "Fynn Irion",
+      "Nico Schmid",
+      "Bernd Irion",
+      "Johannes Müller"
+    ],
+    "B": [
+      "Steffen Hoffmann",
+      "Kai Schmid",
+      "Sven Maier",
+      "Harry Leopold",
+      "Manuel Vögele",
+      "Bernd Hengsteler",
+      "Daniel Merz",
+      "Patrick Fuchs",
+      "Fabian Schmid",
+      "Robert Edelmann",
+      "Amelie Hoffmann"
+    ]
   }
 }
