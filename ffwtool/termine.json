@@ -450,7 +450,7 @@
     },
     {
       "id": 655,
-      "datum": "2026-03-06 20:00:00",
+      "datum": "2026-03-06 18:30:00",
       "name": "Hauptversammlung in Higz",
       "veranstalter": "Alle",
       "Gruppe": "Alle",
@@ -793,7 +793,7 @@
       "send": "0"
     }
   ],
-  "stand": "2026-02-16 22:42:22",
+  "stand": "2026-03-06 22:42:22",
   "Gruppen": {
     "A": [
       "Michael Baumann",
