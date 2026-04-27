@@ -7,9 +7,12 @@ import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
 import Toast from 'primevue/toast';
+import ConfirmDialog from 'primevue/confirmdialog';
 import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 
 const toast = useToast();
+const confirm = useConfirm();
 
 const data = ref({
   termine: [],
@@ -98,8 +101,24 @@ const addTermin = () => {
 };
 
 const deleteTermin = (id) => {
-  data.value.termine = data.value.termine.filter(t => t.id !== id);
-  toast.add({ severity: 'info', summary: 'Info', detail: 'Termin gelöscht', life: 3000 });
+  confirm.require({
+    message: 'Möchten Sie diesen Termin wirklich löschen?',
+    header: 'Löschen bestätigen',
+    icon: 'fa fa-exclamation-triangle',
+    rejectLabel: 'Abbrechen',
+    acceptLabel: 'Löschen',
+    rejectProps: {
+        severity: 'secondary',
+        outlined: true
+    },
+    acceptProps: {
+        severity: 'danger'
+    },
+    accept: () => {
+      data.value.termine = data.value.termine.filter(t => t.id !== id);
+      toast.add({ severity: 'info', summary: 'Info', detail: 'Termin gelöscht', life: 3000 });
+    }
+  });
 };
 
 const showJson = () => {
@@ -126,12 +145,13 @@ const downloadJson = () => {
 
 <template>
   <Toast />
+  <ConfirmDialog />
   <div class="p-4 max-w-7xl mx-auto min-h-screen bg-gray-50 text-gray-900 font-sans">
     <h1 class="text-3xl font-bold text-red-700 mb-6 flex items-center gap-2 border-b pb-2">
       <i class="fa fa-fire text-red-600"></i> Termin-Erfassungsmaske
     </h1>
 
-    <div class="bg-white shadow-sm border rounded-lg overflow-hidden mb-6">
+    <div class="hidden md:block bg-white shadow-sm border rounded-lg overflow-hidden mb-6">
       <DataTable 
         :value="data.termine" 
         class="p-datatable-sm" 
@@ -166,6 +186,37 @@ const downloadJson = () => {
       </DataTable>
     </div>
 
+    <!-- Mobile Card View -->
+    <div class="md:hidden space-y-4 mb-6">
+      <div v-for="termin in data.termine" :key="termin.id" class="bg-white p-4 shadow-sm border rounded-lg">
+          <div class="flex justify-between items-start mb-3 border-b pb-2">
+              <div class="flex flex-col gap-1">
+                  <span class="text-xs font-bold text-red-600 uppercase tracking-tight">ID: {{ termin.id }}</span>
+                  <Select v-model="termin.Gruppe" :options="gruppeOptions" class="p-select-sm !w-32" />
+              </div>
+              <Button icon="fa fa-trash" severity="danger" text @click="deleteTermin(termin.id)" />
+          </div>
+          
+          <div class="space-y-4">
+              <div class="flex flex-col gap-1">
+                  <label class="text-xs font-semibold text-gray-500 ml-1">Datum</label>
+                  <DatePicker v-model="termin.datumDate" @date-select="termin.datum = formatDate(termin.datumDate)" showTime hourFormat="24" fluid />
+              </div>
+              <div class="flex flex-col gap-1">
+                  <label class="text-xs font-semibold text-gray-500 ml-1">Name</label>
+                  <InputText v-model="termin.name" fluid />
+              </div>
+              <div class="flex flex-col gap-1">
+                  <label class="text-xs font-semibold text-gray-500 ml-1">Veranstalter</label>
+                  <InputText v-model="termin.veranstalter" fluid />
+              </div>
+          </div>
+      </div>
+      <div v-if="data.termine.length === 0" class="text-center py-8 bg-white rounded-lg border border-dashed text-gray-400">
+          Keine Termine vorhanden.
+      </div>
+    </div>
+
     <div class="bg-white p-6 shadow-sm border rounded-lg mb-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-700">Neuen Termin hinzufügen</h2>
       <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -186,17 +237,17 @@ const downloadJson = () => {
           <Select v-model="newTermin.Gruppe" :options="gruppeOptions" placeholder="Gruppe" fluid />
         </div>
         <div class="flex items-end">
-          <Button label="Hinzufügen" icon="fa fa-plus" @click="addTermin" fluid class="h-10" />
+          <Button label="Hinzufügen" icon="fa fa-plus" @click="addTermin" fluid class="h-10 font-semibold" />
         </div>
       </div>
     </div>
 
-    <div class="flex justify-between items-center mb-12">
-      <div class="flex gap-2">
-        <Button label="Zeige JSON" severity="secondary" @click="showJson" icon="fa fa-code" />
-        <Button label="JSON Download" severity="primary" @click="downloadJson" icon="fa fa-download" />
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-12">
+      <div class="flex gap-2 w-full md:w-auto">
+        <Button label="Zeige JSON" severity="secondary" @click="showJson" icon="fa fa-code" class="flex-1 md:flex-none" />
+        <Button label="JSON Download" severity="primary" @click="downloadJson" icon="fa fa-download" class="flex-1 md:flex-none" />
       </div>
-      <div class="text-sm text-gray-500 bg-white px-3 py-1 border rounded-full shadow-sm">
+      <div class="text-sm text-gray-500 bg-white px-3 py-1 border rounded-full shadow-sm w-full md:w-auto text-center">
         Letzter Stand: {{ data.stand || 'Unbekannt' }}
       </div>
     </div>
@@ -214,8 +265,8 @@ const downloadJson = () => {
 <style scoped>
 /* Scoped styles */
 :deep(.p-datatable-thead > tr > th) {
-    background-color: #fef2f2;
-    color: #dc2626;
+    background-color: var(--p-red-50);
+    color: var(--p-red-600);
     font-weight: 600;
 }
 
