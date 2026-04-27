@@ -21,20 +21,20 @@ const terminSchema = z.object({
   datum: z.string().min(1, "Datum ist erforderlich"),
   name: z.string().min(3, "Name muss mindestens 3 Zeichen lang sein"),
   veranstalter: z.string().min(1, "Veranstalter ist erforderlich"),
-  Gruppe: z.enum(['Alle', 'Zug', 'HoSi']).default("Alle"),
+  Gruppe: z.string().min(1, "Gruppe ist erforderlich"),
   send: z.union([z.string(), z.number().transform(val => val.toString())]).default("0")
 });
 
 const appDataSchema = z.object({
   termine: z.array(terminSchema),
   stand: z.string().optional().default(""),
-  gruppen: z.record(z.any()).optional().default({ A: [], B: [] })
+  Gruppen: z.record(z.any()).optional().default({ A: [], B: [] })
 });
 
 const data = ref({
   termine: [],
   stand: '',
-  gruppen: { A: [], B: [] }
+  Gruppen: { A: [], B: [] }
 });
 
 const gruppeOptions = ref(['Alle', 'Zug', 'HoSi']);
