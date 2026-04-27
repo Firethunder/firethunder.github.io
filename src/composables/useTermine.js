@@ -10,7 +10,7 @@ export function useTermine(toast, confirm) {
     Gruppen: { A: [], B: [] }
   });
 
-  const gruppeOptions = ref(['Alle', 'Zug', 'Hosi']);
+  const gruppeOptions = ref(['Alle', 'Zug', 'Hosi', 'Jugend']);
 
   const newTermin = ref({
     datum: null,
@@ -21,6 +21,7 @@ export function useTermine(toast, confirm) {
 
   const jsonOutput = ref('');
   const validationErrors = ref({});
+  const isLoading = ref(false);
 
   watch(newTermin, () => {
     if (Object.keys(validationErrors.value).length > 0) {
@@ -58,12 +59,17 @@ export function useTermine(toast, confirm) {
   };
 
   onMounted(async () => {
+    isLoading.value = true;
+    // Simulated delay for visual verification of loading state
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     const remoteData = await loadRemoteData();
     
     if (!remoteData) {
       if (!data.value.termine || data.value.termine.length === 0) {
         toast?.add({ severity: 'error', summary: 'Fehler', detail: 'Daten konnten nicht geladen werden', life: 3000 });
       }
+      isLoading.value = false;
       return;
     }
 
@@ -91,6 +97,7 @@ export function useTermine(toast, confirm) {
           toast?.add({ severity: 'info', summary: 'Aktualisierung', detail: 'Neue Daten vom Server geladen und zusammengeführt.', life: 5000 });
       }
     }
+    isLoading.value = false;
   });
 
   const maxId = computed(() => {
@@ -131,6 +138,7 @@ export function useTermine(toast, confirm) {
     }
 
     data.value.termine.push(validatedTermin);
+    data.value.stand = formatDate(new Date());
 
     newTermin.value = {
       datum: null,
@@ -159,6 +167,7 @@ export function useTermine(toast, confirm) {
       },
       accept: () => {
         data.value.termine = data.value.termine.filter(t => t.id !== id);
+        data.value.stand = formatDate(new Date());
         toast?.add({ severity: 'info', summary: 'Info', detail: 'Termin gelöscht', life: 3000 });
       }
     });
@@ -179,6 +188,7 @@ export function useTermine(toast, confirm) {
           severity: 'warn'
       },
       accept: async () => {
+        isLoading.value = true;
         const remoteData = await loadRemoteData();
         if (remoteData) {
           data.value = {
@@ -192,14 +202,15 @@ export function useTermine(toast, confirm) {
         } else {
           toast?.add({ severity: 'error', summary: 'Fehler', detail: 'Daten konnten nicht geladen werden.', life: 3000 });
         }
+        isLoading.value = false;
       }
     });
   };
 
   const showJson = () => {
+    data.value.stand = formatDate(new Date());
     const outputData = { 
       ...data.value, 
-      stand: formatDate(new Date()),
       termine: data.value.termine.map(({ datumDate, ...t }) => t)
     };
 
@@ -211,9 +222,9 @@ export function useTermine(toast, confirm) {
   };
 
   const downloadJson = () => {
+    data.value.stand = formatDate(new Date());
     const outputData = { 
       ...data.value, 
-      stand: formatDate(new Date()),
       termine: data.value.termine.map(({ datumDate, ...t }) => t)
     };
     
@@ -234,12 +245,29 @@ export function useTermine(toast, confirm) {
     toast?.add({ severity: 'success', summary: 'Download', detail: 'JSON wurde heruntergeladen', life: 3000 });
   };
 
+  const sortedTermine = computed(() => {
+    return [...data.value.termine].sort((a, b) => {
+      // Sort by datum descending
+      const dateA = new Date(remoteStandString(a.datum));
+      const dateB = new Date(remoteStandString(b.datum));
+      
+      if (dateB - dateA !== 0) {
+        return dateB - dateA;
+      }
+      
+      // If dates are equal, sort by id descending
+      return (parseInt(b.id) || 0) - (parseInt(a.id) || 0);
+    });
+  });
+
   return {
     data,
+    sortedTermine,
     gruppeOptions,
     newTermin,
     jsonOutput,
     validationErrors,
+    isLoading,
     addTermin,
     deleteTermin,
     discardLocalData,

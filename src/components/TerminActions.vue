@@ -12,7 +12,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['show-json', 'download-json', 'discard-local-data', 'close-preview']);
+const emit = defineEmits(['show-json', 'download-json', 'close-preview']);
 </script>
 
 <template>
@@ -20,7 +20,6 @@ const emit = defineEmits(['show-json', 'download-json', 'discard-local-data', 'c
       <div class="flex flex-wrap gap-2 w-full md:w-auto">
         <Button label="Zeige JSON" severity="secondary" @click="$emit('show-json')" icon="fa fa-code" class="flex-1 md:flex-none" />
         <Button label="JSON Download" severity="primary" @click="$emit('download-json')" icon="fa fa-download" class="flex-1 md:flex-none" />
-        <Button label="Lokale Daten verwerfen" severity="warn" @click="$emit('discard-local-data')" icon="fa fa-refresh" class="flex-1 md:flex-none" />
       </div>
       <div class="text-sm text-gray-500 bg-white px-3 py-1 border rounded-full shadow-sm w-full md:w-auto text-center">
         Letzter Stand: {{ stand || 'Unbekannt' }}

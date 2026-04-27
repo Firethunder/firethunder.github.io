@@ -18,7 +18,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['delete-termin']);
+const emit = defineEmits(['delete-termin', 'discard-local-data']);
 </script>
 
 <template>
@@ -28,28 +28,38 @@ const emit = defineEmits(['delete-termin']);
         class="p-datatable-sm" 
         scrollable 
         tableStyle="min-width: 60rem"
+        paginator 
+        :rows="10" 
+        :rowsPerPageOptions="[5, 10, 20, 50]"
+        removableSort
       >
-        <Column field="datum" header="Datum" style="width: 250px">
+        <Column field="datum" header="Datum" style="width: 250px" sortable>
           <template #body="slotProps">
             <DatePicker v-model="slotProps.data.datumDate" @date-select="slotProps.data.datum = formatDate(slotProps.data.datumDate)" showTime hourFormat="24" fluid />
           </template>
         </Column>
-        <Column field="name" header="Name">
+        <Column field="name" header="Name" sortable>
           <template #body="slotProps">
             <InputText v-model="slotProps.data.name" fluid :invalid="slotProps.data.name.length < 3" />
           </template>
         </Column>
-        <Column field="veranstalter" header="Veranstalter">
+        <Column field="veranstalter" header="Veranstalter" sortable>
           <template #body="slotProps">
             <InputText v-model="slotProps.data.veranstalter" fluid :invalid="!slotProps.data.veranstalter" />
           </template>
         </Column>
-        <Column field="Gruppe" header="Gruppe" style="width: 150px">
+        <Column field="Gruppe" header="Gruppe" style="width: 150px" sortable>
           <template #body="slotProps">
             <Select v-model="slotProps.data.Gruppe" :options="gruppeOptions" fluid />
           </template>
         </Column>
-        <Column header="Aktion" style="width: 4rem">
+        <Column style="width: 8rem">
+          <template #header>
+            <div class="flex items-center justify-between w-full">
+              <span>Aktion</span>
+              <Button icon="fa fa-refresh" text severity="warn" @click="$emit('discard-local-data')" size="small" />
+            </div>
+          </template>
           <template #body="slotProps">
             <Button icon="fa fa-trash" severity="danger" text @click="$emit('delete-termin', slotProps.data.id)" />
           </template>
@@ -59,6 +69,10 @@ const emit = defineEmits(['delete-termin']);
 
     <!-- Mobile Card View -->
     <div class="md:hidden space-y-4 mb-6">
+      <div class="flex justify-between items-center px-1 mb-2">
+          <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider ml-1">Termine</span>
+          <Button label="Neu laden" icon="fa fa-refresh" text severity="warn" size="small" @click="$emit('discard-local-data')" />
+      </div>
       <div v-for="termin in termine" :key="termin.id" class="bg-white p-4 shadow-sm border rounded-lg">
           <div class="flex justify-between items-start mb-3 border-b pb-2">
               <div class="flex flex-col gap-1">
