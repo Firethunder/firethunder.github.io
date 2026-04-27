@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import DatePicker from 'primevue/datepicker';
@@ -10,9 +10,26 @@ import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
+import { z } from 'zod';
 
 const toast = useToast();
 const confirm = useConfirm();
+
+// Validation Schemas
+const terminSchema = z.object({
+  id: z.union([z.number(), z.string().transform((val) => parseInt(val))]),
+  datum: z.string().min(1, "Datum ist erforderlich"),
+  name: z.string().min(3, "Name muss mindestens 3 Zeichen lang sein"),
+  veranstalter: z.string().min(1, "Veranstalter ist erforderlich"),
+  Gruppe: z.enum(['Alle', 'Zug', 'HoSi']).default("Alle"),
+  send: z.union([z.string(), z.number().transform(val => val.toString())]).default("0")
+});
+
+const appDataSchema = z.object({
+  termine: z.array(terminSchema),
+  stand: z.string().optional().default(""),
+  gruppen: z.record(z.any()).optional().default({ A: [], B: [] })
+});
 
 const data = ref({
   termine: [],
@@ -30,17 +47,35 @@ const newTermin = ref({
 });
 
 const jsonOutput = ref('');
+const validationErrors = ref({});
+
+watch(newTermin, () => {
+  if (Object.keys(validationErrors.value).length > 0) {
+    validateForm();
+  }
+}, { deep: true });
 
 onMounted(async () => {
   try {
     const response = await fetch('./termine.json');
-    const jsonData = await response.json();
+    const rawData = await response.json();
     
-    // Normalize Gruppe field as per legacy script
+    // Validate schema
+    const result = appDataSchema.safeParse(rawData);
+    
+    if (!result.success) {
+      console.error('Schema validation failed:', result.error);
+      toast.add({ severity: 'error', summary: 'Ungültige Daten', detail: 'Die JSON-Datei entspricht nicht dem erwarteten Format', life: 5000 });
+      // Initialize with safe empty structure
+      data.value = { termine: [], stand: '', gruppen: { A: [], B: [] } };
+      return;
+    }
+
+    const jsonData = result.data;
+    
+    // Normalize and add datumDate for UI
     jsonData.termine = jsonData.termine.map(t => ({
       ...t,
-      Gruppe: t.Gruppe || t.gruppe || "Alle",
-      // Convert string date to Date object for DatePicker
       datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null
     }));
     
@@ -55,39 +90,40 @@ const maxId = computed(() => {
   return Math.max(0, ...data.value.termine.map(t => parseInt(t.id) || 0));
 });
 
-const formatDate = (date) => {
-  if (!date) return '';
-  const d = new Date(date);
-  const pad = n => n.toString().padStart(2, '0');
-  // Internal/Legacy Format: YYYY-MM-DD HH:mm:ss
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-};
-
-const displayDate = (date) => {
-  if (!date) return '';
-  const d = new Date(date);
-  const pad = n => n.toString().padStart(2, '0');
-  // German Display Format: DD.MM.YYYY HH:mm
-  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-};
-
-const addTermin = () => {
-  if (!newTermin.value.datum || !newTermin.value.name) {
-    toast.add({ severity: 'warn', summary: 'Warnung', detail: 'Datum und Name sind erforderlich', life: 3000 });
-    return;
-  }
-
-  const termin = {
+const validateForm = () => {
+  const payload = {
     id: maxId.value + 1,
     datum: formatDate(newTermin.value.datum),
-    datumDate: newTermin.value.datum,
     name: newTermin.value.name,
     veranstalter: newTermin.value.veranstalter,
     Gruppe: newTermin.value.Gruppe,
     send: "0"
   };
 
-  data.value.termine.push(termin);
+  const result = terminSchema.safeParse(payload);
+
+  if (!result.success) {
+    const errors = {};
+    result.error.issues.forEach(issue => {
+      errors[issue.path[0]] = issue.message;
+    });
+    validationErrors.value = errors;
+    return null;
+  }
+
+  validationErrors.value = {};
+  return { ...result.data, datumDate: newTermin.value.datum };
+};
+
+const addTermin = () => {
+  const validatedTermin = validateForm();
+  
+  if (!validatedTermin) {
+    toast.add({ severity: 'warn', summary: 'Validierungsfehler', detail: 'Bitte prüfen Sie Ihre Eingaben', life: 3000 });
+    return;
+  }
+
+  data.value.termine.push(validatedTermin);
 
   // Reset form
   newTermin.value = {
@@ -96,6 +132,7 @@ const addTermin = () => {
     veranstalter: '',
     Gruppe: 'Alle'
   };
+  validationErrors.value = {};
   
   toast.add({ severity: 'success', summary: 'Erfolg', detail: 'Termin hinzugefügt', life: 3000 });
 };
@@ -132,7 +169,15 @@ const downloadJson = () => {
     termine: data.value.termine.map(({ datumDate, ...t }) => t) // Remove datumDate before export
   };
   
-  const blob = new Blob([JSON.stringify(outputData, null, 2)], { type: "application/json" });
+  // Validate before export
+  const result = appDataSchema.safeParse(outputData);
+  if (!result.success) {
+    console.error('Export validation failed:', result.error);
+    toast.add({ severity: 'error', summary: 'Export Fehler', detail: 'Die Daten sind ungültig und können nicht exportiert werden.', life: 5000 });
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(result.data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -222,19 +267,23 @@ const downloadJson = () => {
       <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div class="flex flex-col gap-1">
           <label class="text-sm font-medium text-gray-500 ml-1">Datum</label>
-          <DatePicker v-model="newTermin.datum" placeholder="Datum auswählen" showTime hourFormat="24" fluid />
+          <DatePicker v-model="newTermin.datum" placeholder="Datum auswählen" showTime hourFormat="24" fluid :invalid="!!validationErrors.datum" />
+          <small v-if="validationErrors.datum" class="text-red-500 ml-1 text-xs">{{ validationErrors.datum }}</small>
         </div>
         <div class="flex flex-col gap-1">
           <label class="text-sm font-medium text-gray-500 ml-1">Name</label>
-          <InputText v-model="newTermin.name" placeholder="Einsatzübung..." fluid />
+          <InputText v-model="newTermin.name" placeholder="Einsatzübung..." fluid :invalid="!!validationErrors.name" />
+          <small v-if="validationErrors.name" class="text-red-500 ml-1 text-xs">{{ validationErrors.name }}</small>
         </div>
         <div class="flex flex-col gap-1">
           <label class="text-sm font-medium text-gray-500 ml-1">Veranstalter</label>
-          <InputText v-model="newTermin.veranstalter" placeholder="FFW..." fluid />
+          <InputText v-model="newTermin.veranstalter" placeholder="FFW..." fluid :invalid="!!validationErrors.veranstalter" />
+          <small v-if="validationErrors.veranstalter" class="text-red-500 ml-1 text-xs">{{ validationErrors.veranstalter }}</small>
         </div>
         <div class="flex flex-col gap-1">
           <label class="text-sm font-medium text-gray-500 ml-1">Gruppe</label>
-          <Select v-model="newTermin.Gruppe" :options="gruppeOptions" placeholder="Gruppe" fluid />
+          <Select v-model="newTermin.Gruppe" :options="gruppeOptions" placeholder="Gruppe" fluid :invalid="!!validationErrors.Gruppe" />
+          <small v-if="validationErrors.Gruppe" class="text-red-500 ml-1 text-xs">{{ validationErrors.Gruppe }}</small>
         </div>
         <div class="flex items-end">
           <Button label="Hinzufügen" icon="fa fa-plus" @click="addTermin" fluid class="h-10 font-semibold" />
