@@ -10,6 +10,7 @@ import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
+import { useStorage } from '@vueuse/core';
 import { z } from 'zod';
 
 const toast = useToast();
@@ -35,13 +36,13 @@ const appDataSchema = z.object({
   message: "Datumsformat ist ungültig (ISO-Format nicht erlaubt)"
 });
 
-const data = ref({
+const data = useStorage('ffwtool-state', {
   termine: [],
   stand: '',
   Gruppen: { A: [], B: [] }
 });
 
-const gruppeOptions = ref(['Alle', 'Zug', 'HoSi']);
+const gruppeOptions = ref(['Alle', 'Zug', 'Hosi']);
 
 const newTermin = ref({
   datum: null,
@@ -59,13 +60,11 @@ watch(newTermin, () => {
   }
 }, { deep: true });
 
-onMounted(async () => {
+const loadRemoteData = async () => {
   try {
-    // Fetch relative to the current path (which is /ffwtool/ during dev/prod)
     const response = await fetch('termine.json');
     const rawData = await response.json();
     
-    // Pre-normalize legacy data to ensure it passes strict schema
     if (rawData.termine && Array.isArray(rawData.termine)) {
       rawData.termine = rawData.termine.map(t => ({
         ...t,
@@ -78,31 +77,91 @@ onMounted(async () => {
       }));
     }
 
-    // Validate schema
     const result = appDataSchema.safeParse(rawData);
-    
     if (!result.success) {
       console.error('Schema validation failed:', result.error);
-      toast.add({ severity: 'error', summary: 'Ungültige Daten', detail: 'Die JSON-Datei entspricht nicht dem erwarteten Format', life: 5000 });
-      // Initialize with safe empty structure matching the schema
-      data.value = { termine: [], stand: '', Gruppen: { A: [], B: [] } };
-      return;
+      return null;
     }
-
-    const jsonData = result.data;
-    
-    // Normalize and add datumDate for UI
-    jsonData.termine = jsonData.termine.map(t => ({
-      ...t,
-      datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null
-    }));
-    
-    data.value = jsonData;
+    return result.data;
   } catch (error) {
-    console.error('Error loading data:', error);
-    toast.add({ severity: 'error', summary: 'Fehler', detail: 'Daten konnten nicht geladen werden', life: 3000 });
+    console.error('Error fetching remote data:', error);
+    return null;
+  }
+};
+
+onMounted(async () => {
+  const remoteData = await loadRemoteData();
+  
+  if (!remoteData) {
+    if (!data.value.termine || data.value.termine.length === 0) {
+      toast.add({ severity: 'error', summary: 'Fehler', detail: 'Daten konnten nicht geladen werden', life: 3000 });
+    }
+    return;
+  }
+
+  // If local storage is empty OR remote data is newer (based on "stand")
+  const remoteStand = remoteData.stand ? new Date(remoteStandString(remoteData.stand)) : new Date(0);
+  const localStand = data.value.stand ? new Date(remoteStandString(data.value.stand)) : new Date(0);
+
+  if (!data.value.termine || data.value.termine.length === 0 || remoteStand > localStand) {
+    // Merge Strategy: Prioritize remote data but keep strictly local new additions
+    const remoteIds = new Set(remoteData.termine.map(t => parseInt(t.id)));
+    const localOnlyTermine = data.value.termine.filter(t => !remoteIds.has(parseInt(t.id)));
+    
+    // Combine remote data with datumDate
+    const mergedTermine = [
+      ...remoteData.termine.map(t => ({
+        ...t,
+        datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null
+      })),
+      ...localOnlyTermine
+    ];
+
+    data.value = {
+      ...remoteData,
+      termine: mergedTermine
+    };
+    
+    if (data.value.termine.length > 0 && localStand > new Date(0) && remoteStand > localStand) {
+        toast.add({ severity: 'info', summary: 'Aktualisierung', detail: 'Neue Daten vom Server geladen und zusammengeführt.', life: 5000 });
+    }
   }
 });
+
+// Utility to parse "stand" string (YYYY-MM-DD HH:mm:ss) for comparison
+const remoteStandString = (stand) => stand ? stand.replace(/-/g, '/') : "";
+
+const discardLocalData = () => {
+  confirm.require({
+    message: 'Möchten Sie alle lokalen Änderungen verwerfen und die Daten vom Server neu laden?',
+    header: 'Lokale Daten verwerfen',
+    icon: 'fa fa-refresh',
+    rejectLabel: 'Abbrechen',
+    acceptLabel: 'Neu laden',
+    rejectProps: {
+        severity: 'secondary',
+        outlined: true
+    },
+    acceptProps: {
+        severity: 'warn'
+    },
+    accept: async () => {
+      const remoteData = await loadRemoteData();
+      if (remoteData) {
+        data.value = {
+          ...remoteData,
+          termine: remoteData.termine.map(t => ({
+            ...t,
+            datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null
+          }))
+        };
+        toast.add({ severity: 'success', summary: 'Neu geladen', detail: 'Lokale Daten wurden verworfen.', life: 3000 });
+      } else {
+        toast.add({ severity: 'error', summary: 'Fehler', detail: 'Daten konnten nicht geladen werden.', life: 3000 });
+      }
+    }
+  });
+};
 
 const maxId = computed(() => {
   return Math.max(0, ...data.value.termine.map(t => parseInt(t.id) || 0));
@@ -338,9 +397,10 @@ const downloadJson = () => {
     </div>
 
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-12">
-      <div class="flex gap-2 w-full md:w-auto">
+      <div class="flex flex-wrap gap-2 w-full md:w-auto">
         <Button label="Zeige JSON" severity="secondary" @click="showJson" icon="fa fa-code" class="flex-1 md:flex-none" />
         <Button label="JSON Download" severity="primary" @click="downloadJson" icon="fa fa-download" class="flex-1 md:flex-none" />
+        <Button label="Lokale Daten verwerfen" severity="warn" @click="discardLocalData" icon="fa fa-refresh" class="flex-1 md:flex-none" />
       </div>
       <div class="text-sm text-gray-500 bg-white px-3 py-1 border rounded-full shadow-sm w-full md:w-auto text-center">
         Letzter Stand: {{ data.stand || 'Unbekannt' }}
