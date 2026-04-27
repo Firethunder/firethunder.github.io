@@ -17,18 +17,22 @@ const confirm = useConfirm();
 
 // Validation Schemas
 const terminSchema = z.object({
-  id: z.union([z.number(), z.string().transform((val) => parseInt(val))]),
+  id: z.coerce.number().default(0),
   datum: z.string().min(1, "Datum ist erforderlich"),
   name: z.string().min(3, "Name muss mindestens 3 Zeichen lang sein"),
   veranstalter: z.string().min(1, "Veranstalter ist erforderlich"),
   Gruppe: z.string().min(1, "Gruppe ist erforderlich"),
-  send: z.union([z.string(), z.number().transform(val => val.toString())]).default("0")
+  send: z.coerce.string().default("0")
 });
 
 const appDataSchema = z.object({
   termine: z.array(terminSchema),
-  stand: z.string().optional().default(""),
-  Gruppen: z.record(z.any()).optional().default({ A: [], B: [] })
+  stand: z.coerce.string().default(""),
+  Gruppen: z.any().optional().default({ A: [], B: [] })
+}).refine(data => {
+  return data.termine.every(t => !t.datum.includes('T') && !t.datum.includes('Z'));
+}, {
+  message: "Datumsformat ist ungültig (ISO-Format nicht erlaubt)"
 });
 
 const data = ref({
@@ -57,17 +61,31 @@ watch(newTermin, () => {
 
 onMounted(async () => {
   try {
-    const response = await fetch('./termine.json');
+    // Fetch relative to the current path (which is /ffwtool/ during dev/prod)
+    const response = await fetch('termine.json');
     const rawData = await response.json();
     
+    // Pre-normalize legacy data to ensure it passes strict schema
+    if (rawData.termine && Array.isArray(rawData.termine)) {
+      rawData.termine = rawData.termine.map(t => ({
+        ...t,
+        id: t.id ?? 0,
+        datum: t.datum ?? "",
+        name: t.name ?? "Unbenannt",
+        veranstalter: t.veranstalter ?? "Unbekannt",
+        Gruppe: t.Gruppe ?? t.gruppe ?? "Alle",
+        send: t.send ?? "0"
+      }));
+    }
+
     // Validate schema
     const result = appDataSchema.safeParse(rawData);
     
     if (!result.success) {
       console.error('Schema validation failed:', result.error);
       toast.add({ severity: 'error', summary: 'Ungültige Daten', detail: 'Die JSON-Datei entspricht nicht dem erwarteten Format', life: 5000 });
-      // Initialize with safe empty structure
-      data.value = { termine: [], stand: '', gruppen: { A: [], B: [] } };
+      // Initialize with safe empty structure matching the schema
+      data.value = { termine: [], stand: '', Gruppen: { A: [], B: [] } };
       return;
     }
 
@@ -89,6 +107,22 @@ onMounted(async () => {
 const maxId = computed(() => {
   return Math.max(0, ...data.value.termine.map(t => parseInt(t.id) || 0));
 });
+
+const formatDate = (date) => {
+  if (!date) return '';
+  const d = new Date(date);
+  const pad = n => n.toString().padStart(2, '0');
+  // Internal/Legacy Format: YYYY-MM-DD HH:mm:ss
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+};
+
+const displayDate = (date) => {
+  if (!date) return '';
+  const d = new Date(date);
+  const pad = n => n.toString().padStart(2, '0');
+  // German Display Format: DD.MM.YYYY HH:mm
+  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
 const validateForm = () => {
   const payload = {
@@ -116,6 +150,7 @@ const validateForm = () => {
 };
 
 const addTermin = () => {
+  // First, run the validation
   const validatedTermin = validateForm();
   
   if (!validatedTermin) {
@@ -123,9 +158,10 @@ const addTermin = () => {
     return;
   }
 
+  // Only add if validation passed
   data.value.termine.push(validatedTermin);
 
-  // Reset form
+  // Reset form and errors
   newTermin.value = {
     datum: null,
     name: '',
@@ -159,7 +195,17 @@ const deleteTermin = (id) => {
 };
 
 const showJson = () => {
-  jsonOutput.value = JSON.stringify(data.value, null, 2);
+  const outputData = { 
+    ...data.value, 
+    stand: formatDate(new Date()),
+    termine: data.value.termine.map(({ datumDate, ...t }) => t)
+  };
+
+  const result = appDataSchema.safeParse(outputData);
+  if (!result.success) {
+    toast.add({ severity: 'error', summary: 'Validierungsfehler', detail: 'Die Daten enthalten ungültige Felder.', life: 5000 });
+  }
+  jsonOutput.value = JSON.stringify(outputData, null, 2);
 };
 
 const downloadJson = () => {
@@ -173,7 +219,7 @@ const downloadJson = () => {
   const result = appDataSchema.safeParse(outputData);
   if (!result.success) {
     console.error('Export validation failed:', result.error);
-    toast.add({ severity: 'error', summary: 'Export Fehler', detail: 'Die Daten sind ungültig und können nicht exportiert werden.', life: 5000 });
+    toast.add({ severity: 'error', summary: 'Export Fehler', detail: 'Die Daten sind ungültig (z.B. leere Felder) und können nicht exportiert werden.', life: 5000 });
     return;
   }
 
@@ -210,12 +256,12 @@ const downloadJson = () => {
         </Column>
         <Column field="name" header="Name">
           <template #body="slotProps">
-            <InputText v-model="slotProps.data.name" fluid />
+            <InputText v-model="slotProps.data.name" fluid :invalid="slotProps.data.name.length < 3" />
           </template>
         </Column>
         <Column field="veranstalter" header="Veranstalter">
           <template #body="slotProps">
-            <InputText v-model="slotProps.data.veranstalter" fluid />
+            <InputText v-model="slotProps.data.veranstalter" fluid :invalid="!slotProps.data.veranstalter" />
           </template>
         </Column>
         <Column field="Gruppe" header="Gruppe" style="width: 150px">
@@ -249,11 +295,11 @@ const downloadJson = () => {
               </div>
               <div class="flex flex-col gap-1">
                   <label class="text-xs font-semibold text-gray-500 ml-1">Name</label>
-                  <InputText v-model="termin.name" fluid />
+                  <InputText v-model="termin.name" fluid :invalid="termin.name.length < 3" />
               </div>
               <div class="flex flex-col gap-1">
                   <label class="text-xs font-semibold text-gray-500 ml-1">Veranstalter</label>
-                  <InputText v-model="termin.veranstalter" fluid />
+                  <InputText v-model="termin.veranstalter" fluid :invalid="!termin.veranstalter" />
               </div>
           </div>
       </div>
