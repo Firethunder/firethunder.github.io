@@ -18,7 +18,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['delete-termin', 'discard-local-data']);
+const emit = defineEmits(['delete-termin', 'discard-local-data', 'export-ical']);
 </script>
 
 <template>
@@ -27,7 +27,7 @@ const emit = defineEmits(['delete-termin', 'discard-local-data']);
         :value="termine" 
         class="p-datatable-sm" 
         scrollable 
-        tableStyle="min-width: 60rem"
+        tableStyle="min-width: 80rem"
         paginator 
         :rows="10" 
         :rowsPerPageOptions="[5, 10, 20, 50]"
@@ -53,7 +53,17 @@ const emit = defineEmits(['delete-termin', 'discard-local-data']);
             <Select v-model="slotProps.data.Gruppe" :options="gruppeOptions" fluid />
           </template>
         </Column>
-        <Column style="width: 8rem">
+        <Column field="ort" header="Ort" style="width: 200px" sortable>
+          <template #body="slotProps">
+            <InputText v-model="slotProps.data.ort" fluid />
+          </template>
+        </Column>
+        <Column field="dauer" header="Dauer" style="width: 100px" sortable>
+          <template #body="slotProps">
+            <InputText v-model="slotProps.data.dauer" type="number" fluid />
+          </template>
+        </Column>
+        <Column style="width: 10rem">
           <template #header>
             <div class="flex items-center justify-between w-full">
               <span>Aktion</span>
@@ -61,7 +71,10 @@ const emit = defineEmits(['delete-termin', 'discard-local-data']);
             </div>
           </template>
           <template #body="slotProps">
-            <Button icon="fa fa-trash" severity="danger" text @click="$emit('delete-termin', slotProps.data.id)" />
+            <div class="flex gap-1">
+              <Button icon="fa fa-calendar-plus" text @click="$emit('export-ical', slotProps.data)" v-tooltip.top="'Kalender Export'" />
+              <Button icon="fa fa-trash" severity="danger" text @click="$emit('delete-termin', slotProps.data.id)" />
+            </div>
           </template>
         </Column>
       </DataTable>
@@ -77,7 +90,10 @@ const emit = defineEmits(['delete-termin', 'discard-local-data']);
           <div class="flex justify-between items-start mb-3 border-b pb-2">
               <div class="flex flex-col gap-1">
                   <span class="text-xs font-bold text-red-600 uppercase tracking-tight">ID: {{ termin.id }}</span>
-                  <Select v-model="termin.Gruppe" :options="gruppeOptions" class="p-select-sm !w-32" />
+                  <div class="flex gap-2 items-center">
+                    <Select v-model="termin.Gruppe" :options="gruppeOptions" class="p-select-sm !w-24" />
+                    <Button icon="fa fa-calendar-plus" text size="small" @click="$emit('export-ical', termin)" />
+                  </div>
               </div>
               <Button icon="fa fa-trash" severity="danger" text @click="$emit('delete-termin', termin.id)" />
           </div>
@@ -94,6 +110,16 @@ const emit = defineEmits(['delete-termin', 'discard-local-data']);
               <div class="flex flex-col gap-1">
                   <label class="text-xs font-semibold text-gray-500 ml-1">Veranstalter</label>
                   <InputText v-model="termin.veranstalter" fluid :invalid="!termin.veranstalter" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-gray-500 ml-1">Ort</label>
+                    <InputText v-model="termin.ort" fluid size="small" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-gray-500 ml-1">Dauer</label>
+                    <InputText v-model="termin.dauer" type="number" fluid size="small" />
+                </div>
               </div>
           </div>
       </div>

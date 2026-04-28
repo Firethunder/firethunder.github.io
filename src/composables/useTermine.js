@@ -2,12 +2,15 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useStorage } from '@vueuse/core';
 import { terminSchema, appDataSchema } from '../utils/validation';
 import { formatDate, remoteStandString } from '../utils/date';
+import { generateIcalBlob } from '../utils/ical';
 
 export function useTermine(toast, confirm) {
   const data = useStorage('ffwtool-state', {
     termine: [],
     stand: '',
-    Gruppen: { A: [], B: [] }
+    Gruppen: { A: [], B: [] },
+    defaultOrt: 'Brittheim',
+    defaultDauer: 120
   });
 
   const gruppeOptions = ref(['Alle', 'Zug', 'Hosi', 'Jugend']);
@@ -16,18 +19,27 @@ export function useTermine(toast, confirm) {
     datum: null,
     name: '',
     veranstalter: '',
-    Gruppe: 'Alle'
+    Gruppe: 'Alle',
+    ort: data.value.defaultOrt || 'Brittheim',
+    dauer: data.value.defaultDauer || 120
   });
 
   const jsonOutput = ref('');
   const validationErrors = ref({});
   const isLoading = ref(false);
 
-  watch(newTermin, () => {
-    if (Object.keys(validationErrors.value).length > 0) {
-      validateForm();
+  // Watch for changes in defaults to update newTermin initialization
+  watch(() => data.value.defaultOrt, (val) => {
+    if (!newTermin.value.ort || newTermin.value.ort === 'Isingen') {
+       newTermin.value.ort = val;
     }
-  }, { deep: true });
+  });
+  
+  watch(() => data.value.defaultDauer, (val) => {
+    if (newTermin.value.dauer === 120) {
+       newTermin.value.dauer = val;
+    }
+  });
 
   const loadRemoteData = async () => {
     try {
@@ -42,6 +54,8 @@ export function useTermine(toast, confirm) {
           name: t.name ?? "Unbenannt",
           veranstalter: t.veranstalter ?? "Unbekannt",
           Gruppe: t.Gruppe ?? t.gruppe ?? "Alle",
+          ort: t.ort ?? data.value.defaultOrt,
+          dauer: t.dauer ?? data.value.defaultDauer,
           send: t.send ?? "0"
         }));
       }
@@ -83,12 +97,15 @@ export function useTermine(toast, confirm) {
       const mergedTermine = [
         ...remoteData.termine.map(t => ({
           ...t,
-          datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null
+          datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null,
+          ort: t.ort ?? data.value.defaultOrt,
+          dauer: t.dauer ?? data.value.defaultDauer
         })),
         ...localOnlyTermine
       ];
 
       data.value = {
+        ...data.value,
         ...remoteData,
         termine: mergedTermine
       };
@@ -111,6 +128,8 @@ export function useTermine(toast, confirm) {
       name: newTermin.value.name,
       veranstalter: newTermin.value.veranstalter,
       Gruppe: newTermin.value.Gruppe,
+      ort: newTermin.value.ort || data.value.defaultOrt,
+      dauer: newTermin.value.dauer || data.value.defaultDauer,
       send: "0"
     };
 
@@ -144,7 +163,9 @@ export function useTermine(toast, confirm) {
       datum: null,
       name: '',
       veranstalter: '',
-      Gruppe: 'Alle'
+      Gruppe: 'Alle',
+      ort: data.value.defaultOrt,
+      dauer: data.value.defaultDauer
     };
     validationErrors.value = {};
     
@@ -192,10 +213,13 @@ export function useTermine(toast, confirm) {
         const remoteData = await loadRemoteData();
         if (remoteData) {
           data.value = {
+            ...data.value,
             ...remoteData,
             termine: remoteData.termine.map(t => ({
               ...t,
-              datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null
+              datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null,
+              ort: t.ort ?? data.value.defaultOrt,
+              dauer: t.dauer ?? data.value.defaultDauer
             }))
           };
           toast?.add({ severity: 'success', summary: 'Neu geladen', detail: 'Lokale Daten wurden verworfen.', life: 3000 });
@@ -207,35 +231,27 @@ export function useTermine(toast, confirm) {
     });
   };
 
-  const showJson = () => {
+  const getSanitizedData = () => {
     data.value.stand = formatDate(new Date());
-    const outputData = { 
-      ...data.value, 
-      termine: data.value.termine.map(({ datumDate, ...t }) => t)
+    // Strip ort and dauer for backward compatible JSON export
+    // We intentionally do NOT use appDataSchema here because it would re-insert defaults
+    const sanitizedTermine = data.value.termine.map(({ datumDate, ort, dauer, ...t }) => t);
+    
+    return { 
+      termine: sanitizedTermine,
+      stand: data.value.stand,
+      Gruppen: data.value.Gruppen
     };
+  };
 
-    const result = appDataSchema.safeParse(outputData);
-    if (!result.success) {
-      toast?.add({ severity: 'error', summary: 'Validierungsfehler', detail: 'Die Daten enthalten ungültige Felder.', life: 5000 });
-    }
+  const showJson = () => {
+    const outputData = getSanitizedData();
     jsonOutput.value = JSON.stringify(outputData, null, 2);
   };
 
   const downloadJson = () => {
-    data.value.stand = formatDate(new Date());
-    const outputData = { 
-      ...data.value, 
-      termine: data.value.termine.map(({ datumDate, ...t }) => t)
-    };
-    
-    const result = appDataSchema.safeParse(outputData);
-    if (!result.success) {
-      console.error('Export validation failed:', result.error);
-      toast?.add({ severity: 'error', summary: 'Export Fehler', detail: 'Die Daten sind ungültig (z.B. leere Felder) und können nicht exportiert werden.', life: 5000 });
-      return;
-    }
-
-    const blob = new Blob([JSON.stringify(result.data, null, 2)], { type: "application/json" });
+    const outputData = getSanitizedData();
+    const blob = new Blob([JSON.stringify(outputData, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -243,6 +259,25 @@ export function useTermine(toast, confirm) {
     a.click();
     URL.revokeObjectURL(url);
     toast?.add({ severity: 'success', summary: 'Download', detail: 'JSON wurde heruntergeladen', life: 3000 });
+  };
+
+  const downloadIcal = (termin) => {
+    try {
+      generateIcalBlob(termin, `${termin.name.replace(/\s/g, '_')}.ics`);
+      toast?.add({ severity: 'success', summary: 'iCal Download', detail: `Termin "${termin.name}" exportiert`, life: 3000 });
+    } catch (error) {
+      toast?.add({ severity: 'error', summary: 'Export Fehler', detail: 'Termin konnte nicht exportiert werden.', life: 3000 });
+    }
+  };
+
+  const downloadAllIcal = () => {
+    try {
+      const exportData = data.value.termine.map(({ datumDate, ...t }) => t);
+      generateIcalBlob(exportData, 'termine.ics');
+      toast?.add({ severity: 'success', summary: 'iCal Download', detail: 'Alle Termine exportiert', life: 3000 });
+    } catch (error) {
+      toast?.add({ severity: 'error', summary: 'Export Fehler', detail: 'Termine konnten nicht exportiert werden.', life: 3000 });
+    }
   };
 
   const sortedTermine = computed(() => {
@@ -272,6 +307,8 @@ export function useTermine(toast, confirm) {
     deleteTermin,
     discardLocalData,
     showJson,
-    downloadJson
+    downloadJson,
+    downloadIcal,
+    downloadAllIcal
   };
 }

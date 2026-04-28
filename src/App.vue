@@ -33,7 +33,9 @@ const {
   deleteTermin,
   discardLocalData,
   showJson,
-  downloadJson
+  downloadJson,
+  downloadIcal,
+  downloadAllIcal
 } = useTermine(toast, confirm);
 </script>
 
@@ -52,7 +54,7 @@ const {
     <Tabs value="0">
       <TabList class="mb-6">
         <Tab value="0" class="flex items-center gap-2"><i class="fa fa-calendar"></i> Termine</Tab>
-        <Tab value="1" class="flex items-center gap-2"><i class="fa fa-database"></i> Daten-Export</Tab>
+        <Tab value="1" class="flex items-center gap-2"><i class="fa fa-database"></i> Export/Import</Tab>
       </TabList>
       <TabPanels class="!p-0 !bg-transparent">
         <TabPanel value="0">
@@ -61,6 +63,7 @@ const {
             :gruppe-options="gruppeOptions" 
             @delete-termin="deleteTermin" 
             @discard-local-data="discardLocalData"
+            @export-ical="downloadIcal"
           />
           <TerminForm 
             :new-termin="newTermin" 
@@ -73,8 +76,10 @@ const {
           <TerminActions 
             :stand="data.stand" 
             :json-output="jsonOutput" 
+            :defaults="data"
             @show-json="showJson" 
             @download-json="downloadJson" 
+            @download-ical="downloadAllIcal"
             @close-preview="jsonOutput = ''" 
           />        </TabPanel>
       </TabPanels>
