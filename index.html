@@ -1,86 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-<title>Firethunder.github.io</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
-.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
-.fa-anchor,.fa-coffee,.fa-android {font-size:200px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firethunder Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col items-center">
 
-<!-- Navbar -->
-<div class="w3-top">
-  <div class="w3-bar w3-red w3-card w3-left-align w3-large">
-    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-    <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
-    <a href="./ffwtool/" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white text-bold">FFW-Tool</a>
-  </div>
+    <!-- Header -->
+    <header class="w-full bg-red-700 text-white py-12 px-4 shadow-md text-center">
+        <h1 class="text-4xl font-extrabold tracking-tight mb-2">Firethunder</h1>
+        <p class="text-red-100 text-lg opacity-90">Simple Tools & Data</p>
+    </header>
 
-  <!-- Navbar on small screens -->
-  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-    <a href="./ffwtool/" class="w3-bar-item w3-button w3-padding-large">FFW-Tool</a>
-  </div>
-</div>
+    <!-- Simple Container -->
+    <main class="max-w-xl w-full flex-grow py-16 px-4">
+        <div class="grid gap-4">
+            <!-- Tool Card -->
+            <a href="./ffwtool/" class="group block p-6 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-red-600 hover:shadow-md transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold mb-1 group-hover:text-red-700 transition-colors">FFW-Tool</h2>
+                        <p class="text-gray-500">Terminverwaltung & Mannschaft</p>
+                    </div>
+                    <div class="text-gray-300 group-hover:text-red-600 transition-colors">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                </div>
+            </a>
 
-<!-- Header -->
-<header class="w3-container w3-red w3-center" style="padding:128px 16px">
-  <h1 class="w3-margin w3-jumbo">Firethunder</h1>
-  <p class="w3-xlarge">Termin-Erfassungsmaske & Tools</p>
-  <a href="./ffwtool/" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">FFW-Tool öffnen</a>
-</header>
+            <!-- Placeholder for future tools -->
+            <div class="p-6 bg-gray-100 border border-gray-200 rounded-2xl opacity-60">
+                <h2 class="text-xl font-bold mb-1 italic text-gray-400">Next Tool...</h2>
+                <p class="text-gray-400">More tools coming soon</p>
+            </div>
+        </div>
+    </main>
 
-<!-- First Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>Firethunder.io</h1>
-      <h5 class="w3-padding-32">Microsite mit Zusatzdaten für eine App</h5>
-
-      <p class="w3-text-grey">Viel mehr gibts hier (aktuell) nicht zu sehen.</p>
-    </div>
-
-    <div class="w3-third w3-center">
-      <i class="fa fa-android w3-padding-64 w3-text-red"></i>
-    </div>
-  </div>
-</div>
-
-<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-</div>
-
-<!-- Footer -->
-<footer class="w3-container w3-padding-64 w3-center w3-opacity">  
-  <div class="w3-xlarge w3-padding-32">
-    <i class="fa fa-facebook-official w3-hover-opacity"></i>
-    <i class="fa fa-instagram w3-hover-opacity"></i>
-    <i class="fa fa-snapchat w3-hover-opacity"></i>
-    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
-    <i class="fa fa-twitter w3-hover-opacity"></i>
-    <i class="fa fa-linkedin w3-hover-opacity"></i>
- </div>
- <p>Template powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
- <p>Website hosted by <a href="https://github.com" target="_blank">github.com</a></p>
-</footer>
-
-<script>
-// Used to toggle the menu on small screens when clicking on the menu button
-function myFunction() {
-  var x = document.getElementById("navDemo");
-  if (x.className.indexOf("w3-show") == -1) {
-    x.className += " w3-show";
-  } else { 
-    x.className = x.className.replace(" w3-show", "");
-  }
-}
-</script>
+    <!-- Footer -->
+    <footer class="w-full max-w-xl py-12 text-center border-t border-gray-200 mx-4">
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="./policy.html" class="text-sm text-gray-500 hover:text-red-700 transition-colors">Datenschutz</a>
+            <a href="./tos.html" class="text-sm text-gray-500 hover:text-red-700 transition-colors">Impressum & Nutzungsbedingungen</a>
+        </div>
+        <p class="text-gray-400 text-xs">&copy; 2026 Firethunder</p>
+    </footer>
 
 </body>
 </html>

@@ -90,7 +90,7 @@ export function useTermine(toast, confirm) {
     confirm?.require({
       message: "Möchten Sie diesen Termin wirklich löschen?",
       header: "Löschen bestätigen",
-      icon: "fa fa-exclamation-triangle",
+      icon: "pi pi-exclamation-triangle",
       rejectLabel: "Abbrechen",
       acceptLabel: "Löschen",
       rejectProps: {
@@ -120,7 +120,7 @@ export function useTermine(toast, confirm) {
       message:
         "Möchten Sie alle lokalen Änderungen verwerfen und die Daten vom Server neu laden?",
       header: "Daten neu laden",
-      icon: "fa fa-refresh",
+      icon: "pi pi-refresh",
       accept: async () => {
         isLoading.value = true;
         // Using absolute path to avoid issues with subdirectories like /ffwtool/

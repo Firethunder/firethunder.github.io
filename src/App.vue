@@ -51,14 +51,14 @@ const {
   
   <div class="p-4 max-w-7xl mx-auto min-h-screen bg-gray-50 text-gray-900 font-sans">
     <h1 class="text-3xl font-bold text-red-700 mb-6 flex items-center gap-2 border-b pb-2">
-      <i class="fa fa-fire text-red-600"></i> Termin-Erfassungsmaske
+      <i class="pi pi-bolt text-red-600"></i> Termin-Erfassungsmaske
     </h1>
 
     <Tabs value="0">
       <TabList class="mb-6">
-        <Tab value="0" class="flex items-center gap-2"><i class="fa fa-calendar"></i> Termine</Tab>
-        <Tab value="1" class="flex items-center gap-2"><i class="fa fa-users"></i> Mannschaft</Tab>
-        <Tab value="2" class="flex items-center gap-2"><i class="fa fa-database"></i> Export/Import</Tab>
+        <Tab value="0" class="flex items-center gap-2"><i class="pi pi-calendar"></i> Termine</Tab>
+        <Tab value="1" class="flex items-center gap-2"><i class="pi pi-users"></i> Mannschaft</Tab>
+        <Tab value="2" class="flex items-center gap-2"><i class="pi pi-database"></i> Export/Import</Tab>
       </TabList>
       <TabPanels class="!p-0 !bg-transparent">
         <TabPanel value="0">

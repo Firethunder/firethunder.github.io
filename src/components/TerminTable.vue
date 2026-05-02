@@ -49,7 +49,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
       <Column field="name" header="Name" sortable>
         <template #body="slotProps">
           <div class="flex items-center gap-2">
-            <i v-if="slotProps.data.source === 'gcal'" class="fa fa-google text-blue-500 text-xs" v-tooltip.top="'Synchronisiert von Google Calendar'"></i>
+            <i v-if="slotProps.data.source === 'gcal'" class="pi pi-google text-blue-500 text-xs" v-tooltip.top="'Synchronisiert von Google Calendar'"></i>
             <InputText v-model="slotProps.data.name" fluid :invalid="slotProps.data.name.length < 3" />
           </div>
         </template>
@@ -83,7 +83,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
           <div class="flex items-center justify-between w-full">
             <span>Aktion</span>
             <Button
-              icon="fa fa-refresh"
+              icon="pi pi-refresh"
               text
               severity="warn"
               @click="$emit('discard-local-data')"
@@ -94,13 +94,13 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
         <template #body="slotProps">
           <div class="flex gap-1">
             <Button
-              icon="fa fa-calendar-plus"
+              icon="pi pi-calendar-plus"
               text
               @click="$emit('export-ical', slotProps.data)"
               v-tooltip.top="'Kalender Export'"
             />
             <Button
-              icon="fa fa-trash"
+              icon="pi pi-trash"
               severity="danger"
               text
               @click="$emit('delete-termin', slotProps.data.id)"
@@ -119,7 +119,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
       >
       <Button
         label="Neu laden"
-        icon="fa fa-refresh"
+        icon="pi pi-refresh"
         text
         severity="warn"
         size="small"
@@ -133,9 +133,14 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
     >
       <div class="flex justify-between items-start mb-3 border-b pb-2">
         <div class="flex flex-col gap-1">
-          <span class="text-xs font-bold text-red-600 uppercase tracking-tight"
-            >ID: {{ termin.id }}</span
-          >
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-red-600 uppercase tracking-tight"
+              >ID: {{ termin.id }}</span>
+            <i
+              v-if="termin.source === 'gcal'"
+              class="pi pi-google text-blue-500 text-[10px]"
+            ></i>
+          </div>
           <div class="flex gap-2 items-center">
             <Select
               v-model="termin.Gruppe"
@@ -143,7 +148,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
               class="p-select-sm !w-24"
             />
             <Button
-              icon="fa fa-calendar-plus"
+              icon="pi pi-calendar-plus"
               text
               size="small"
               @click="$emit('export-ical', termin)"
@@ -151,7 +156,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
           </div>
         </div>
         <Button
-          icon="fa fa-trash"
+          icon="pi pi-trash"
           severity="danger"
           text
           @click="$emit('delete-termin', termin.id)"

@@ -33,7 +33,7 @@ const removeMember = (group, index) => {
 <template>
   <div class="bg-white p-6 shadow-sm border rounded-lg mb-6">
     <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">
-      <i class="fa fa-users text-red-600 mr-2"></i> Mannschaftsverwaltung
+      <i class="pi pi-users text-red-600 mr-2"></i> Mannschaftsverwaltung
     </h2>
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
@@ -48,14 +48,14 @@ const removeMember = (group, index) => {
         
         <div class="flex gap-2 mb-4">
           <InputText v-model="newMemberA" placeholder="Name eingeben..." fluid @keyup.enter="addMember('A')" size="small" />
-          <Button icon="fa fa-plus" @click="addMember('A')" severity="primary" size="small" />
+          <Button icon="pi pi-plus" @click="addMember('A')" severity="primary" size="small" />
         </div>
 
         <ul class="space-y-2 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
           <li v-for="(member, index) in gruppen.A" :key="index" 
               class="flex justify-between items-center p-2 bg-gray-50 border rounded hover:bg-white transition-colors group">
             <span class="text-sm font-medium text-gray-700">{{ member }}</span>
-            <Button icon="fa fa-trash" severity="danger" text size="small" 
+            <Button icon="pi pi-trash" severity="danger" text size="small" 
                     class="opacity-0 group-hover:opacity-100 transition-opacity"
                     @click="removeMember('A', index)" />
           </li>
@@ -76,14 +76,14 @@ const removeMember = (group, index) => {
 
         <div class="flex gap-2 mb-4">
           <InputText v-model="newMemberB" placeholder="Name eingeben..." fluid @keyup.enter="addMember('B')" size="small" />
-          <Button icon="fa fa-plus" @click="addMember('B')" severity="info" size="small" />
+          <Button icon="pi pi-plus" @click="addMember('B')" severity="info" size="small" />
         </div>
 
         <ul class="space-y-2 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
           <li v-for="(member, index) in gruppen.B" :key="index" 
               class="flex justify-between items-center p-2 bg-gray-50 border rounded hover:bg-white transition-colors group">
             <span class="text-sm font-medium text-gray-700">{{ member }}</span>
-            <Button icon="fa fa-trash" severity="danger" text size="small" 
+            <Button icon="pi pi-trash" severity="danger" text size="small" 
                     class="opacity-0 group-hover:opacity-100 transition-opacity"
                     @click="removeMember('B', index)" />
           </li>

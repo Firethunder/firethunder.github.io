@@ -55,7 +55,7 @@ const emit = defineEmits(['add-termin']);
           <InputText v-model="newTermin.dauer" type="number" placeholder="120" fluid />
         </div>
         <div class="flex items-end">
-          <Button label="Hinzufügen" icon="fa fa-plus" @click="$emit('add-termin')" fluid class="h-10 font-semibold" />
+          <Button label="Hinzufügen" icon="pi pi-plus" @click="$emit('add-termin')" fluid class="h-10 font-semibold" />
         </div>
       </div>
     </div>
