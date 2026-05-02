@@ -25,7 +25,7 @@ const emit = defineEmits(['add-termin']);
 <template>
     <div class="bg-white p-6 shadow-sm border rounded-lg mb-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-700">Neuen Termin hinzufügen</h2>
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4">
         <div class="flex flex-col gap-1">
           <label class="text-sm font-medium text-gray-500 ml-1">Datum</label>
           <DatePicker v-model="newTermin.datum" placeholder="Datum auswählen" showTime hourFormat="24" fluid :invalid="!!validationErrors.datum" />
@@ -45,6 +45,14 @@ const emit = defineEmits(['add-termin']);
           <label class="text-sm font-medium text-gray-500 ml-1">Gruppe</label>
           <Select v-model="newTermin.Gruppe" :options="gruppeOptions" placeholder="Gruppe" fluid :invalid="!!validationErrors.Gruppe" />
           <small v-if="validationErrors.Gruppe" class="text-red-500 ml-1 text-xs">{{ validationErrors.Gruppe }}</small>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500 ml-1">Ort</label>
+          <InputText v-model="newTermin.ort" placeholder="Brittheim..." fluid />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-500 ml-1">Dauer (Min)</label>
+          <InputText v-model="newTermin.dauer" type="number" placeholder="120" fluid />
         </div>
         <div class="flex items-end">
           <Button label="Hinzufügen" icon="fa fa-plus" @click="$emit('add-termin')" fluid class="h-10 font-semibold" />

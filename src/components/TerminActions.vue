@@ -1,5 +1,6 @@
 <script setup>
 import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
 
 const props = defineProps({
   stand: {
@@ -9,21 +10,59 @@ const props = defineProps({
   jsonOutput: {
     type: String,
     default: ''
+  },
+  defaults: {
+    type: Object,
+    required: true
   }
 });
 
-const emit = defineEmits(['show-json', 'download-json', 'discard-local-data', 'close-preview']);
+const emit = defineEmits(['show-json', 'download-json', 'download-ical', 'sync-gcal', 'close-preview']);
 </script>
 
 <template>
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-12">
-      <div class="flex flex-wrap gap-2 w-full md:w-auto">
-        <Button label="Zeige JSON" severity="secondary" @click="$emit('show-json')" icon="fa fa-code" class="flex-1 md:flex-none" />
-        <Button label="JSON Download" severity="primary" @click="$emit('download-json')" icon="fa fa-download" class="flex-1 md:flex-none" />
-        <Button label="Lokale Daten verwerfen" severity="warn" @click="$emit('discard-local-data')" icon="fa fa-refresh" class="flex-1 md:flex-none" />
+    <div class="bg-white p-6 shadow-sm border rounded-lg mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Export & Einstellungen</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Standardwerte</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-semibold text-gray-500 ml-1">Standard Ort</label>
+              <InputText v-model="defaults.defaultOrt" placeholder="Brittheim" size="small" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs font-semibold text-gray-500 ml-1">Standard Dauer (Min)</label>
+              <InputText v-model="defaults.defaultDauer" type="number" placeholder="120" size="small" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">GCal Sync</h3>
+          <div class="flex flex-col gap-3">
+            <Button label="GCal Synchronisieren" severity="help" @click="$emit('sync-gcal')" icon="fa fa-google" size="small" fluid />
+            <div v-if="defaults.lastSync" class="text-[10px] text-gray-400 text-center italic">
+              Zuletzt: {{ defaults.lastSync }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex flex-col">
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Aktionen</h3>
+          <div class="flex flex-wrap gap-2">
+            <Button label="Zeige JSON" severity="secondary" @click="$emit('show-json')" icon="fa fa-code" size="small" />
+            <Button label="JSON Download" severity="primary" @click="$emit('download-json')" icon="fa fa-download" size="small" />
+            <Button label="iCal Download" severity="info" @click="$emit('download-ical')" icon="fa fa-calendar" size="small" />
+          </div>
+        </div>
       </div>
-      <div class="text-sm text-gray-500 bg-white px-3 py-1 border rounded-full shadow-sm w-full md:w-auto text-center">
-        Letzter Stand: {{ stand || 'Unbekannt' }}
+
+      <div class="flex justify-center border-t pt-4">
+        <div class="text-xs text-gray-400 px-3 py-1 bg-gray-50 rounded-full border">
+          Letzter Stand: {{ stand || 'Unbekannt' }}
+        </div>
       </div>
     </div>
 

@@ -7,7 +7,11 @@ export const terminSchema = z.object({
   name: z.string().min(3, "Name muss mindestens 3 Zeichen lang sein"),
   veranstalter: z.string().min(1, "Veranstalter ist erforderlich"),
   Gruppe: z.string().min(1, "Gruppe ist erforderlich"),
-  send: z.coerce.string().default("0")
+  ort: z.string().optional().default(""),
+  dauer: z.coerce.number().optional().default(120),
+  send: z.coerce.string().default("0"),
+  source: z.string().optional().default("manual"),
+  external_id: z.string().optional()
 });
 
 export const appDataSchema = z.object({

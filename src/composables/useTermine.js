@@ -1,249 +1,340 @@
-import { ref, computed, watch, onMounted } from 'vue';
-import { useStorage } from '@vueuse/core';
-import { terminSchema, appDataSchema } from '../utils/validation';
-import { formatDate, remoteStandString } from '../utils/date';
+import { ref, computed, watch, onMounted } from "vue";
+import { useStorage } from "@vueuse/core";
+import { terminSchema, appDataSchema } from "../utils/validation";
+import { formatDate, remoteStandString } from "../utils/date";
+import { generateIcalBlob } from "../utils/ical";
+import { syncGoogleCalendar, mergeGCalTermine } from "../utils/gcal";
 
 export function useTermine(toast, confirm) {
-  const data = useStorage('ffwtool-state', {
+  const data = useStorage("ffwtool-state", {
     termine: [],
-    stand: '',
-    Gruppen: { A: [], B: [] }
+    stand: "",
+    Gruppen: { A: [], B: [] },
+    defaultOrt: "Brittheim",
+    defaultDauer: 120,
+    lastSync: "",
   });
 
-  const gruppeOptions = ref(['Alle', 'Zug', 'Hosi']);
+  const gruppeOptions = ref(["Alle", "Zug", "Hosi", "Jugend"]);
 
   const newTermin = ref({
-    datum: null,
-    name: '',
-    veranstalter: '',
-    Gruppe: 'Alle'
+    datum: "",
+    datumDate: null,
+    name: "",
+    veranstalter: "Alle", // Updated default
+    Gruppe: "Alle",
+    ort: data.value.defaultOrt || "Brittheim",
+    dauer: data.value.defaultDauer || 120,
   });
 
-  const jsonOutput = ref('');
+  const jsonOutput = ref("");
   const validationErrors = ref({});
+  const isLoading = ref(false);
 
-  watch(newTermin, () => {
-    if (Object.keys(validationErrors.value).length > 0) {
-      validateForm();
-    }
-  }, { deep: true });
-
-  const loadRemoteData = async () => {
-    try {
-      const response = await fetch('termine.json');
-      const rawData = await response.json();
-      
-      if (rawData.termine && Array.isArray(rawData.termine)) {
-        rawData.termine = rawData.termine.map(t => ({
-          ...t,
-          id: t.id ?? 0,
-          datum: t.datum ?? "",
-          name: t.name ?? "Unbenannt",
-          veranstalter: t.veranstalter ?? "Unbekannt",
-          Gruppe: t.Gruppe ?? t.gruppe ?? "Alle",
-          send: t.send ?? "0"
-        }));
-      }
-
-      const result = appDataSchema.safeParse(rawData);
-      if (!result.success) {
-        console.error('Schema validation failed:', result.error);
-        return null;
-      }
-      return result.data;
-    } catch (error) {
-      console.error('Error fetching remote data:', error);
-      return null;
-    }
-  };
-
+  // Persistence logic
   onMounted(async () => {
-    const remoteData = await loadRemoteData();
+    if (data.value.termine.length === 0) {
+      await discardLocalData();
+    } else {
+      // Re-hydrate dates
+      data.value.termine = data.value.termine.map((t) => ({
+        ...t,
+        datumDate: t.datum ? new Date(t.datum.replace(/-/g, "/")) : null,
+      }));
+    }
     
-    if (!remoteData) {
-      if (!data.value.termine || data.value.termine.length === 0) {
-        toast?.add({ severity: 'error', summary: 'Fehler', detail: 'Daten konnten nicht geladen werden', life: 3000 });
-      }
-      return;
-    }
-
-    const remoteStand = remoteData.stand ? new Date(remoteStandString(remoteData.stand)) : new Date(0);
-    const localStand = data.value.stand ? new Date(remoteStandString(data.value.stand)) : new Date(0);
-
-    if (!data.value.termine || data.value.termine.length === 0 || remoteStand > localStand) {
-      const remoteIds = new Set(remoteData.termine.map(t => parseInt(t.id)));
-      const localOnlyTermine = data.value.termine.filter(t => !remoteIds.has(parseInt(t.id)));
-      
-      const mergedTermine = [
-        ...remoteData.termine.map(t => ({
-          ...t,
-          datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null
-        })),
-        ...localOnlyTermine
-      ];
-
-      data.value = {
-        ...remoteData,
-        termine: mergedTermine
-      };
-      
-      if (data.value.termine.length > 0 && localStand > new Date(0) && remoteStand > localStand) {
-          toast?.add({ severity: 'info', summary: 'Aktualisierung', detail: 'Neue Daten vom Server geladen und zusammengeführt.', life: 5000 });
-      }
-    }
+    // Auto-sync Google Calendar on load
+    await syncFromGCal(true);
   });
-
-  const maxId = computed(() => {
-    return Math.max(0, ...data.value.termine.map(t => parseInt(t.id) || 0));
-  });
-
-  const validateForm = () => {
-    const payload = {
-      id: maxId.value + 1,
-      datum: formatDate(newTermin.value.datum),
-      name: newTermin.value.name,
-      veranstalter: newTermin.value.veranstalter,
-      Gruppe: newTermin.value.Gruppe,
-      send: "0"
-    };
-
-    const result = terminSchema.safeParse(payload);
-
-    if (!result.success) {
-      const errors = {};
-      result.error.issues.forEach(issue => {
-        errors[issue.path[0]] = issue.message;
-      });
-      validationErrors.value = errors;
-      return null;
-    }
-
-    validationErrors.value = {};
-    return { ...result.data, datumDate: newTermin.value.datum };
-  };
 
   const addTermin = () => {
-    const validatedTermin = validateForm();
-    
-    if (!validatedTermin) {
-      toast?.add({ severity: 'warn', summary: 'Validierungsfehler', detail: 'Bitte prüfen Sie Ihre Eingaben', life: 3000 });
-      return;
+    try {
+      const validated = terminSchema.parse(newTermin.value);
+      const maxId = Math.max(0, ...data.value.termine.map((t) => t.id));
+      data.value.termine.push({
+        ...validated,
+        id: maxId + 1,
+        datumDate: newTermin.value.datumDate,
+      });
+
+      // Reset form
+      newTermin.value = {
+        datum: "",
+        datumDate: null,
+        name: "",
+        veranstalter: "Alle",
+        Gruppe: "Alle",
+        ort: data.value.defaultOrt || "Brittheim",
+        dauer: data.value.defaultDauer || 120,
+      };
+      validationErrors.value = {};
+      data.value.stand = formatDate(new Date());
+
+      toast?.add({
+        severity: "success",
+        summary: "Hinzugefügt",
+        detail: "Termin wurde gespeichert",
+        life: 3000,
+      });
+    } catch (err) {
+      if (err.errors) {
+        validationErrors.value = err.errors.reduce((acc, curr) => {
+          acc[curr.path[0]] = curr.message;
+          return acc;
+        }, {});
+      }
     }
-
-    data.value.termine.push(validatedTermin);
-
-    newTermin.value = {
-      datum: null,
-      name: '',
-      veranstalter: '',
-      Gruppe: 'Alle'
-    };
-    validationErrors.value = {};
-    
-    toast?.add({ severity: 'success', summary: 'Erfolg', detail: 'Termin hinzugefügt', life: 3000 });
   };
 
   const deleteTermin = (id) => {
     confirm?.require({
-      message: 'Möchten Sie diesen Termin wirklich löschen?',
-      header: 'Löschen bestätigen',
-      icon: 'fa fa-exclamation-triangle',
-      rejectLabel: 'Abbrechen',
-      acceptLabel: 'Löschen',
+      message: "Möchten Sie diesen Termin wirklich löschen?",
+      header: "Löschen bestätigen",
+      icon: "fa fa-exclamation-triangle",
+      rejectLabel: "Abbrechen",
+      acceptLabel: "Löschen",
       rejectProps: {
-          severity: 'secondary',
-          outlined: true
+        label: "Abbrechen",
+        severity: "secondary",
+        outlined: true,
       },
       acceptProps: {
-          severity: 'danger'
+        label: "Löschen",
+        severity: "danger",
       },
       accept: () => {
-        data.value.termine = data.value.termine.filter(t => t.id !== id);
-        toast?.add({ severity: 'info', summary: 'Info', detail: 'Termin gelöscht', life: 3000 });
-      }
+        data.value.termine = data.value.termine.filter((t) => t.id !== id);
+        data.value.stand = formatDate(new Date());
+        toast?.add({
+          severity: "info",
+          summary: "Gelöscht",
+          detail: "Termin wurde entfernt",
+          life: 3000,
+        });
+      },
     });
   };
 
-  const discardLocalData = () => {
+  const discardLocalData = async () => {
     confirm?.require({
-      message: 'Möchten Sie alle lokalen Änderungen verwerfen und die Daten vom Server neu laden?',
-      header: 'Lokale Daten verwerfen',
-      icon: 'fa fa-refresh',
-      rejectLabel: 'Abbrechen',
-      acceptLabel: 'Neu laden',
-      rejectProps: {
-          severity: 'secondary',
-          outlined: true
-      },
-      acceptProps: {
-          severity: 'warn'
-      },
+      message:
+        "Möchten Sie alle lokalen Änderungen verwerfen und die Daten vom Server neu laden?",
+      header: "Daten neu laden",
+      icon: "fa fa-refresh",
       accept: async () => {
-        const remoteData = await loadRemoteData();
-        if (remoteData) {
-          data.value = {
-            ...remoteData,
-            termine: remoteData.termine.map(t => ({
-              ...t,
-              datumDate: t.datum ? new Date(t.datum.replace(/-/g, '/')) : null
-            }))
-          };
-          toast?.add({ severity: 'success', summary: 'Neu geladen', detail: 'Lokale Daten wurden verworfen.', life: 3000 });
+        isLoading.value = true;
+        // Using absolute path to avoid issues with subdirectories like /ffwtool/
+        const response = await fetch("/ffwtool/termine.json");
+        if (response.ok) {
+          try {
+            const remoteData = await response.json();
+            data.value = {
+              ...data.value,
+              ...remoteData,
+              termine: remoteData.termine.map((t) => ({
+                ...t,
+                datumDate: t.datum ? new Date(t.datum.replace(/-/g, "/")) : null,
+                ort: t.ort || data.value.defaultOrt, 
+                dauer: t.dauer || data.value.defaultDauer, 
+              })),
+            };
+            toast?.add({
+              severity: "success",
+              summary: "Neu geladen",
+              detail: "Lokale Daten wurden verworfen.",
+              life: 3000,
+            });
+          } catch (jsonErr) {
+            console.error('JSON parsing failed:', jsonErr);
+            toast?.add({
+              severity: "error",
+              summary: "Fehler",
+              detail: "Datenformat ist ungültig.",
+              life: 3000,
+            });
+          }
         } else {
-          toast?.add({ severity: 'error', summary: 'Fehler', detail: 'Daten konnten nicht geladen werden.', life: 3000 });
+          toast?.add({
+            severity: "error",
+            summary: "Fehler",
+            detail: `Daten konnten nicht geladen werden (${response.status}).`,
+            life: 3000,
+          });
         }
-      }
+        isLoading.value = false;
+      },
     });
+  };
+
+  const syncFromGCal = async (silent = false) => {
+    if (!silent) isLoading.value = true;
+    try {
+      const gcalTermine = await syncGoogleCalendar(data.value.defaultOrt, data.value.defaultDauer);
+      if (gcalTermine.length === 0) {
+        if (!silent) toast?.add({ severity: 'info', summary: 'GCal Sync', detail: 'Keine Termine im Google Kalender gefunden.', life: 3000 });
+        return;
+      }
+
+      // Track additions and updates
+      let addedCount = 0;
+      let updatedCount = 0;
+      
+      const merged = mergeGCalTermine(data.value.termine, gcalTermine);
+
+      // Assign IDs to new entries and count changes
+      let currentMaxId = Math.max(0, ...data.value.termine.map((t) => parseInt(t.id) || 0));
+      
+      const finalizedFinal = merged.map(t => {
+         const existingIndex = data.value.termine.findIndex(l => (t.external_id && l.external_id === t.external_id) || (l.datum === t.datum && l.name === t.name));
+         
+         if (existingIndex === -1) {
+            addedCount++;
+            currentMaxId++;
+            return {
+               ...t,
+               id: currentMaxId,
+               datumDate: t.datum ? new Date(t.datum.replace(/-/g, "/")) : null,
+            };
+         } else {
+            const l = data.value.termine[existingIndex];
+            const hasChanged = l.ort !== t.ort || l.dauer !== t.dauer || l.Gruppe !== t.Gruppe || l.veranstalter !== t.veranstalter;
+            if (hasChanged) {
+               updatedCount++;
+            }
+            return {
+               ...t,
+               id: l.id,
+               datumDate: t.datum ? new Date(t.datum.replace(/-/g, "/")) : null,
+            };
+         }
+      });
+
+      if (addedCount === 0 && updatedCount === 0) {
+         if (!silent) toast?.add({ severity: 'info', summary: 'GCal Sync', detail: 'Alle Termine sind bereits auf dem neuesten Stand.', life: 3000 });
+      } else {
+         data.value.termine = finalizedFinal;
+         data.value.lastSync = new Date().toLocaleString("de-DE");
+         data.value.stand = formatDate(new Date());
+
+         if (!silent) {
+            let detail = "";
+            if (addedCount > 0) detail += `${addedCount} neu hinzugefügt. `;
+            if (updatedCount > 0) detail += `${updatedCount} aktualisiert.`;
+            toast?.add({ severity: 'success', summary: 'GCal Erfolg', detail: detail.trim(), life: 3000 });
+         }
+      }
+    } catch (error) {
+      console.error('GCal Sync failed:', error);
+      if (!silent) toast?.add({ severity: 'error', summary: 'GCal Fehler', detail: 'Synchronisierung fehlgeschlagen.', life: 3000 });
+    } finally {
+      if (!silent) isLoading.value = false;
+    }
+  };
+
+  const getSanitizedData = () => {
+    data.value.stand = formatDate(new Date());
+    const sanitizedTermine = data.value.termine.map(
+      ({ datumDate, ...t }) => t
+    );
+
+    return {
+      termine: sanitizedTermine,
+      stand: data.value.stand,
+      Gruppen: data.value.Gruppen,
+    };
   };
 
   const showJson = () => {
-    const outputData = { 
-      ...data.value, 
-      stand: formatDate(new Date()),
-      termine: data.value.termine.map(({ datumDate, ...t }) => t)
-    };
-
-    const result = appDataSchema.safeParse(outputData);
-    if (!result.success) {
-      toast?.add({ severity: 'error', summary: 'Validierungsfehler', detail: 'Die Daten enthalten ungültige Felder.', life: 5000 });
-    }
+    const outputData = getSanitizedData();
     jsonOutput.value = JSON.stringify(outputData, null, 2);
   };
 
   const downloadJson = () => {
-    const outputData = { 
-      ...data.value, 
-      stand: formatDate(new Date()),
-      termine: data.value.termine.map(({ datumDate, ...t }) => t)
-    };
-    
-    const result = appDataSchema.safeParse(outputData);
-    if (!result.success) {
-      console.error('Export validation failed:', result.error);
-      toast?.add({ severity: 'error', summary: 'Export Fehler', detail: 'Die Daten sind ungültig (z.B. leere Felder) und können nicht exportiert werden.', life: 5000 });
-      return;
-    }
-
-    const blob = new Blob([JSON.stringify(result.data, null, 2)], { type: "application/json" });
+    const outputData = getSanitizedData();
+    const blob = new Blob([JSON.stringify(outputData, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "termine.json";
     a.click();
     URL.revokeObjectURL(url);
-    toast?.add({ severity: 'success', summary: 'Download', detail: 'JSON wurde heruntergeladen', life: 3000 });
+    toast?.add({
+      severity: "success",
+      summary: "Download",
+      detail: "JSON wurde heruntergeladen",
+      life: 3000,
+    });
   };
+
+  const downloadIcal = (termin) => {
+    try {
+      generateIcalBlob(termin, `${termin.name.replace(/\s/g, "_")}.ics`);
+      toast?.add({
+        severity: "success",
+        summary: "iCal Download",
+        detail: `Termin "${termin.name}" exportiert`,
+        life: 3000,
+      });
+    } catch (error) {
+      toast?.add({
+        severity: "error",
+        summary: "Export Fehler",
+        detail: "Termin konnte nicht exportiert werden.",
+        life: 3000,
+      });
+    }
+  };
+
+  const downloadAllIcal = () => {
+    try {
+      const exportData = data.value.termine.map(({ datumDate, ...t }) => t);
+      generateIcalBlob(exportData, "termine.ics");
+      toast?.add({
+        severity: "success",
+        summary: "iCal Download",
+        detail: "Alle Termine exportiert",
+        life: 3000,
+      });
+    } catch (error) {
+      toast?.add({
+        severity: "error",
+        summary: "Export Fehler",
+        detail: "Termine konnten nicht exportiert werden.",
+        life: 3000,
+      });
+    }
+  };
+
+  const sortedTermine = computed(() => {
+    return [...data.value.termine].sort((a, b) => {
+      const dateA = new Date(remoteStandString(a.datum));
+      const dateB = new Date(remoteStandString(b.datum));
+
+      if (dateB - dateA !== 0) {
+        return dateB - dateA;
+      }
+
+      return (parseInt(b.id) || 0) - (parseInt(a.id) || 0);
+    });
+  });
 
   return {
     data,
+    sortedTermine,
     gruppeOptions,
     newTermin,
     jsonOutput,
     validationErrors,
+    isLoading,
     addTermin,
     deleteTermin,
     discardLocalData,
+    syncFromGCal,
     showJson,
-    downloadJson
+    downloadJson,
+    downloadIcal,
+    downloadAllIcal,
   };
 }
