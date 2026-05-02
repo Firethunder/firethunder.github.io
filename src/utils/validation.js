@@ -9,7 +9,9 @@ export const terminSchema = z.object({
   Gruppe: z.string().min(1, "Gruppe ist erforderlich"),
   ort: z.string().optional().default(""),
   dauer: z.coerce.number().optional().default(120),
-  send: z.coerce.string().default("0")
+  send: z.coerce.string().default("0"),
+  source: z.string().optional().default("manual"),
+  external_id: z.string().optional()
 });
 
 export const appDataSchema = z.object({

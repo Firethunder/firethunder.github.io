@@ -1,6 +1,5 @@
 <script setup>
 import Button from 'primevue/button';
-
 import InputText from 'primevue/inputtext';
 
 const props = defineProps({
@@ -18,14 +17,14 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['show-json', 'download-json', 'download-ical', 'close-preview']);
+const emit = defineEmits(['show-json', 'download-json', 'download-ical', 'sync-gcal', 'close-preview']);
 </script>
 
 <template>
     <div class="bg-white p-6 shadow-sm border rounded-lg mb-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Export & Einstellungen</h2>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
         <div>
           <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Standardwerte</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -39,8 +38,18 @@ const emit = defineEmits(['show-json', 'download-json', 'download-ical', 'close-
             </div>
           </div>
         </div>
+
+        <div>
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">GCal Sync</h3>
+          <div class="flex flex-col gap-3">
+            <Button label="GCal Synchronisieren" severity="help" @click="$emit('sync-gcal')" icon="fa fa-google" size="small" fluid />
+            <div v-if="defaults.lastSync" class="text-[10px] text-gray-400 text-center italic">
+              Zuletzt: {{ defaults.lastSync }}
+            </div>
+          </div>
+        </div>
         
-        <div class="flex flex-col justify-end">
+        <div class="flex flex-col">
           <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Aktionen</h3>
           <div class="flex flex-wrap gap-2">
             <Button label="Zeige JSON" severity="secondary" @click="$emit('show-json')" icon="fa fa-code" size="small" />

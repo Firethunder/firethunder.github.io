@@ -35,7 +35,8 @@ const {
   showJson,
   downloadJson,
   downloadIcal,
-  downloadAllIcal
+  downloadAllIcal,
+  syncFromGCal
 } = useTermine(toast, confirm);
 </script>
 
@@ -80,6 +81,7 @@ const {
             @show-json="showJson" 
             @download-json="downloadJson" 
             @download-ical="downloadAllIcal"
+            @sync-gcal="syncFromGCal"
             @close-preview="jsonOutput = ''" 
           />        </TabPanel>
       </TabPanels>
