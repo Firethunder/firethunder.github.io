@@ -14,6 +14,7 @@ import { useConfirm } from 'primevue/useconfirm';
 import TerminTable from './components/TerminTable.vue';
 import TerminForm from './components/TerminForm.vue';
 import TerminActions from './components/TerminActions.vue';
+import GroupManager from './components/GroupManager.vue';
 
 // Composables
 import { useTermine } from './composables/useTermine';
@@ -55,7 +56,8 @@ const {
     <Tabs value="0">
       <TabList class="mb-6">
         <Tab value="0" class="flex items-center gap-2"><i class="fa fa-calendar"></i> Termine</Tab>
-        <Tab value="1" class="flex items-center gap-2"><i class="fa fa-database"></i> Export/Import</Tab>
+        <Tab value="1" class="flex items-center gap-2"><i class="fa fa-users"></i> Mannschaft</Tab>
+        <Tab value="2" class="flex items-center gap-2"><i class="fa fa-database"></i> Export/Import</Tab>
       </TabList>
       <TabPanels class="!p-0 !bg-transparent">
         <TabPanel value="0">
@@ -74,6 +76,9 @@ const {
           />
         </TabPanel>
         <TabPanel value="1">
+          <GroupManager :gruppen="data.Gruppen" />
+        </TabPanel>
+        <TabPanel value="2">
           <TerminActions 
             :stand="data.stand" 
             :json-output="jsonOutput" 
@@ -83,7 +88,8 @@ const {
             @download-ical="downloadAllIcal"
             @sync-gcal="syncFromGCal"
             @close-preview="jsonOutput = ''" 
-          />        </TabPanel>
+          />        
+        </TabPanel>
       </TabPanels>
     </Tabs>
   </div>
