@@ -1,4 +1,3 @@
-import { createEvents } from 'ics';
 import { saveAs } from 'file-saver';
 
 /**
@@ -36,7 +35,10 @@ export const mapToIcalEvent = (termin) => {
 /**
  * Generates an iCal string from an array of appointments.
  */
-export const createIcalString = (termine) => {
+export const createIcalString = async (termine) => {
+  // Dynamic import for performance
+  const { createEvents } = await import('ics');
+
   return new Promise((resolve, reject) => {
     const events = Array.isArray(termine) ? termine.map(mapToIcalEvent) : [mapToIcalEvent(termine)];
     

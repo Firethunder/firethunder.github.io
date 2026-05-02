@@ -1,4 +1,5 @@
 <script setup>
+import { defineAsyncComponent } from 'vue';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 import ProgressBar from 'primevue/progressbar';
@@ -13,8 +14,8 @@ import { useConfirm } from 'primevue/useconfirm';
 // Components
 import TerminTable from './components/TerminTable.vue';
 import TerminForm from './components/TerminForm.vue';
-import TerminActions from './components/TerminActions.vue';
-import GroupManager from './components/GroupManager.vue';
+const TerminActions = defineAsyncComponent(() => import('./components/TerminActions.vue'));
+const GroupManager = defineAsyncComponent(() => import('./components/GroupManager.vue'));
 
 // Composables
 import { useTermine } from './composables/useTermine';
