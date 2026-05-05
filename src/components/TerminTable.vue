@@ -24,7 +24,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
 
 <template>
   <div
-    class="hidden md:block bg-white shadow-sm border rounded-lg overflow-hidden mb-6"
+    class="hidden md:block bg-white shadow-sm border border-slate-200 rounded-xl overflow-hidden mb-6"
   >
     <DataTable
       :value="termine"

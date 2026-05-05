@@ -22,7 +22,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
 <template>
   <div class="md:hidden space-y-4 mb-6">
     <div class="flex justify-between items-center px-1 mb-2">
-      <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider ml-1"
+      <span class="text-sm font-bold text-slate-500 uppercase tracking-widest ml-1"
         >Termine</span
       >
       <Button
@@ -37,12 +37,12 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
     <div
       v-for="termin in termine"
       :key="termin.id"
-      class="bg-white p-4 shadow-sm border rounded-lg"
+      class="bg-white p-4 shadow-sm border border-slate-200 rounded-xl"
     >
-      <div class="flex justify-between items-start mb-3 border-b pb-2">
+      <div class="flex justify-between items-start mb-3 border-b border-slate-100 pb-2">
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-bold text-red-600 uppercase tracking-tight"
+            <span class="text-xs font-black text-red-600 uppercase tracking-tighter"
               >ID: {{ termin.id }}</span>
             <i
               v-if="termin.source === 'gcal'"
@@ -73,7 +73,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
 
       <div class="space-y-4">
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-gray-500 ml-1">Datum</label>
+          <label class="text-xs font-bold text-slate-500 ml-1">Datum</label>
           <DatePicker
             v-model="termin.datumDate"
             @date-select="termin.datum = formatDate(termin.datumDate)"
@@ -83,7 +83,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-gray-500 ml-1">Name</label>
+          <label class="text-xs font-bold text-slate-500 ml-1">Name</label>
           <InputText
             v-model="termin.name"
             fluid
@@ -91,7 +91,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-gray-500 ml-1"
+          <label class="text-xs font-bold text-slate-500 ml-1"
             >Veranstalter</label
           >
           <InputText
@@ -102,11 +102,11 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold text-gray-500 ml-1">Ort</label>
+            <label class="text-xs font-bold text-slate-500 ml-1">Ort</label>
             <InputText v-model="termin.ort" fluid size="small" />
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold text-gray-500 ml-1">Dauer</label>
+            <label class="text-xs font-bold text-slate-500 ml-1">Dauer</label>
             <InputText v-model="termin.dauer" type="number" fluid size="small" />
           </div>
         </div>
@@ -114,7 +114,7 @@ const emit = defineEmits(["delete-termin", "discard-local-data", "export-ical"])
     </div>
     <div
       v-if="termine.length === 0"
-      class="text-center py-8 bg-white rounded-lg border border-dashed text-gray-400"
+      class="text-center py-8 bg-white rounded-xl border border-dashed border-slate-300 text-slate-400"
     >
       Keine Termine vorhanden.
     </div>
