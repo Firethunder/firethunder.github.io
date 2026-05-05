@@ -42,5 +42,12 @@ export const getYear = (date) => {
   return new Date(date).getFullYear();
 };
 
+export const getTime = (date) => {
+  if (!date) return '';
+  const d = new Date(date);
+  const pad = n => n.toString().padStart(2, '0');
+  return `${pad(d.getHours())}:${pad(d.getMinutes())} Uhr`;
+};
+
 // Utility to parse "stand" string (YYYY-MM-DD HH:mm:ss) for comparison
 export const remoteStandString = (stand) => stand ? stand.replace(/-/g, '/') : "";
