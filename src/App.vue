@@ -49,9 +49,9 @@ const {
     <ProgressBar mode="indeterminate" style="height: 4px" />
   </div>
   
-  <div class="p-4 max-w-7xl mx-auto min-h-screen bg-gray-50 text-gray-900 font-sans">
-    <h1 class="text-3xl font-bold text-red-700 mb-6 flex items-center gap-2 border-b pb-2">
-      <i class="pi pi-bolt text-red-600"></i> Termin-Erfassungsmaske
+  <div class="p-4 max-w-7xl mx-auto min-h-screen bg-slate-50 text-slate-900 font-sans">
+    <h1 class="text-3xl font-black text-red-600 tracking-tight mb-6 flex items-center gap-2 border-b-2 border-slate-200 pb-2 uppercase">
+      <i class="pi pi-bolt"></i> Termin-Erfassungsmaske
     </h1>
 
     <Tabs value="0">
