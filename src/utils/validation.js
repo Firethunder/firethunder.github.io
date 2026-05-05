@@ -17,7 +17,10 @@ export const terminSchema = z.object({
 export const appDataSchema = z.object({
   termine: z.array(terminSchema),
   stand: z.coerce.string().default(""),
-  Gruppen: z.any().optional().default({ A: [], B: [] })
+  Gruppen: z.object({
+    A: z.array(z.string()),
+    B: z.array(z.string())
+  }).optional().default({ A: [], B: [] })
 }).refine(data => {
   return data.termine.every(t => !t.datum.includes('T') && !t.datum.includes('Z'));
 }, {

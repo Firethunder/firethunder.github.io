@@ -1,4 +1,5 @@
 <script setup>
+import { defineAsyncComponent } from 'vue';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 import ProgressBar from 'primevue/progressbar';
@@ -13,7 +14,8 @@ import { useConfirm } from 'primevue/useconfirm';
 // Components
 import TerminTable from './components/TerminTable.vue';
 import TerminForm from './components/TerminForm.vue';
-import TerminActions from './components/TerminActions.vue';
+const TerminActions = defineAsyncComponent(() => import('./components/TerminActions.vue'));
+const GroupManager = defineAsyncComponent(() => import('./components/GroupManager.vue'));
 
 // Composables
 import { useTermine } from './composables/useTermine';
@@ -47,15 +49,16 @@ const {
     <ProgressBar mode="indeterminate" style="height: 4px" />
   </div>
   
-  <div class="p-4 max-w-7xl mx-auto min-h-screen bg-gray-50 text-gray-900 font-sans">
-    <h1 class="text-3xl font-bold text-red-700 mb-6 flex items-center gap-2 border-b pb-2">
-      <i class="fa fa-fire text-red-600"></i> Termin-Erfassungsmaske
+  <div class="p-4 max-w-7xl mx-auto min-h-screen bg-slate-50 text-slate-900 font-sans">
+    <h1 class="text-3xl font-black text-red-600 tracking-tight mb-6 flex items-center gap-2 border-b-2 border-slate-200 pb-2 uppercase">
+      <i class="pi pi-bolt"></i> Termin-Erfassungsmaske
     </h1>
 
     <Tabs value="0">
       <TabList class="mb-6">
-        <Tab value="0" class="flex items-center gap-2"><i class="fa fa-calendar"></i> Termine</Tab>
-        <Tab value="1" class="flex items-center gap-2"><i class="fa fa-database"></i> Export/Import</Tab>
+        <Tab value="0" class="flex items-center gap-2"><i class="pi pi-calendar"></i> Termine</Tab>
+        <Tab value="1" class="flex items-center gap-2"><i class="pi pi-users"></i> Mannschaft</Tab>
+        <Tab value="2" class="flex items-center gap-2"><i class="pi pi-database"></i> Export/Import</Tab>
       </TabList>
       <TabPanels class="!p-0 !bg-transparent">
         <TabPanel value="0">
@@ -74,6 +77,9 @@ const {
           />
         </TabPanel>
         <TabPanel value="1">
+          <GroupManager :gruppen="data.Gruppen" />
+        </TabPanel>
+        <TabPanel value="2">
           <TerminActions 
             :stand="data.stand" 
             :json-output="jsonOutput" 
@@ -83,7 +89,8 @@ const {
             @download-ical="downloadAllIcal"
             @sync-gcal="syncFromGCal"
             @close-preview="jsonOutput = ''" 
-          />        </TabPanel>
+          />        
+        </TabPanel>
       </TabPanels>
     </Tabs>
   </div>

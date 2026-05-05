@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatDate, displayDate, remoteStandString } from './date';
+import { formatDate, displayDate, remoteStandString, formatShortDate, getWeekday } from './date';
 
 describe('date utils', () => {
   describe('formatDate', () => {
@@ -38,6 +38,30 @@ describe('date utils', () => {
     it('should return empty string for empty input', () => {
       expect(remoteStandString('')).toBe('');
       expect(remoteStandString(null)).toBe('');
+    });
+  });
+
+  describe('formatShortDate', () => {
+    it('should format date to DD.MM', () => {
+      const date = new Date('2026-04-27T10:30:00');
+      const formatted = formatShortDate(date);
+      expect(formatted).toBe('27.04.');
+    });
+
+    it('should return empty string for null', () => {
+      expect(formatShortDate(null)).toBe('');
+    });
+  });
+
+  describe('getWeekday', () => {
+    it('should return short German weekday', () => {
+      const date = new Date('2026-04-27T10:30:00'); // April 27, 2026 is Monday (Mo)
+      const weekday = getWeekday(date);
+      expect(weekday).toBe('Mo');
+    });
+
+    it('should return empty string for null', () => {
+      expect(getWeekday(null)).toBe('');
     });
   });
 });

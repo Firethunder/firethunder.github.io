@@ -14,5 +14,33 @@ export const displayDate = (date) => {
   return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
+export const formatShortDate = (date) => {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('de-DE', {
+    day: '2-digit',
+    month: '2-digit'
+  });
+};
+
+export const getWeekday = (date) => {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('de-DE', { weekday: 'short' });
+};
+
+export const getDay = (date) => {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('de-DE', { day: '2-digit' });
+};
+
+export const getShortMonth = (date) => {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('de-DE', { month: 'short' }).replace('.', '');
+};
+
+export const getYear = (date) => {
+  if (!date) return '';
+  return new Date(date).getFullYear();
+};
+
 // Utility to parse "stand" string (YYYY-MM-DD HH:mm:ss) for comparison
 export const remoteStandString = (stand) => stand ? stand.replace(/-/g, '/') : "";

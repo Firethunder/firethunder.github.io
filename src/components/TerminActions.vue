@@ -42,7 +42,7 @@ const emit = defineEmits(['show-json', 'download-json', 'download-ical', 'sync-g
         <div>
           <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">GCal Sync</h3>
           <div class="flex flex-col gap-3">
-            <Button label="GCal Synchronisieren" severity="help" @click="$emit('sync-gcal')" icon="fa fa-google" size="small" fluid />
+            <Button label="GCal Synchronisieren" severity="help" @click="$emit('sync-gcal')" icon="pi pi-google" size="small" fluid />
             <div v-if="defaults.lastSync" class="text-[10px] text-gray-400 text-center italic">
               Zuletzt: {{ defaults.lastSync }}
             </div>
@@ -52,9 +52,9 @@ const emit = defineEmits(['show-json', 'download-json', 'download-ical', 'sync-g
         <div class="flex flex-col">
           <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Aktionen</h3>
           <div class="flex flex-wrap gap-2">
-            <Button label="Zeige JSON" severity="secondary" @click="$emit('show-json')" icon="fa fa-code" size="small" />
-            <Button label="JSON Download" severity="primary" @click="$emit('download-json')" icon="fa fa-download" size="small" />
-            <Button label="iCal Download" severity="info" @click="$emit('download-ical')" icon="fa fa-calendar" size="small" />
+            <Button label="Zeige JSON" severity="secondary" @click="$emit('show-json')" icon="pi pi-code" size="small" />
+            <Button label="JSON Download" severity="primary" @click="$emit('download-json')" icon="pi pi-download" size="small" />
+            <Button label="iCal Download" severity="info" @click="$emit('download-ical')" icon="pi pi-calendar" size="small" />
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@ const emit = defineEmits(['show-json', 'download-json', 'download-ical', 'sync-g
     <div v-if="jsonOutput" class="mt-6">
         <div class="flex justify-between items-center mb-2">
             <h3 class="font-medium text-gray-700 ml-1">JSON Vorschau</h3>
-            <Button icon="fa fa-times" text severity="secondary" @click="$emit('close-preview')" />
+            <Button icon="pi pi-times" text severity="secondary" @click="$emit('close-preview')" />
         </div>
         <pre class="p-4 bg-gray-900 text-green-400 rounded-lg overflow-auto max-h-96 text-xs font-mono shadow-inner border border-gray-700">{{ jsonOutput }}</pre>
     </div>
