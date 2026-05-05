@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { getTime } from '../../utils/date'
 
 const props = defineProps({
   appointments: {
@@ -65,7 +66,9 @@ function formatDate(dateStr) {
         <span class="text-sm font-medium">{{ formatDate(nextAppointment.datum || nextAppointment.Datum) }}</span>
       </div>
       <h3 class="text-xl font-bold mb-1">{{ nextAppointment.name || nextAppointment.Name }}</h3>
-      <p :class="['text-sm transition-colors duration-500', cardStyle.text]">{{ nextAppointment.veranstalter || nextAppointment.Organisator }}</p>
+      <p :class="['text-sm transition-colors duration-500', cardStyle.text]">
+        {{ getTime(nextAppointment.datum || nextAppointment.Datum) }} &bull; {{ nextAppointment.veranstalter || nextAppointment.Organisator }}
+      </p>
     </div>
   </div>
 </template>

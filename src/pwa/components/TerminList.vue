@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getDay, getShortMonth, getWeekday, getYear } from '../../utils/date'
+import { getDay, getShortMonth, getWeekday, getYear, getTime } from '../../utils/date'
 
 const currentYear = new Date().getFullYear()
 
@@ -162,7 +162,9 @@ const filteredList = computed(() => {
         </div>
         <div class="flex-1 min-w-0">
           <h4 class="font-bold text-slate-800 truncate">{{ termin.name || termin.Name }}</h4>
-          <p class="text-xs text-slate-500 truncate">{{ termin.veranstalter || termin.Organisator }}</p>
+          <p class="text-xs text-slate-500 truncate">
+            {{ getTime(termin.datum || termin.Datum) }} &bull; {{ termin.veranstalter || termin.Organisator }}
+          </p>
         </div>
         <div class="ml-2 flex flex-wrap gap-1 justify-end">
           <span 
