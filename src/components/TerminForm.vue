@@ -3,6 +3,7 @@ import DatePicker from 'primevue/datepicker';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
+import { formatDate } from '../utils/date';
 
 const props = defineProps({
   newTermin: {
@@ -27,8 +28,16 @@ const emit = defineEmits(['add-termin']);
       <h2 class="text-xl font-bold mb-4 text-slate-700 tracking-tight">Neuen Termin hinzufügen</h2>
       <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4">
         <div class="flex flex-col gap-1">
-          <label class="text-sm font-semibold text-slate-500 ml-1">Datum</label>
-          <DatePicker v-model="newTermin.datum" placeholder="Datum auswählen" showTime hourFormat="24" fluid :invalid="!!validationErrors.datum" />
+          <label class="text-sm font-medium text-gray-500 ml-1">Datum</label>
+          <DatePicker 
+            v-model="newTermin.datumDate" 
+            @date-select="newTermin.datum = formatDate(newTermin.datumDate)"
+            placeholder="Datum auswählen" 
+            showTime 
+            hourFormat="24" 
+            fluid 
+            :invalid="!!validationErrors.datum" 
+          />
           <small v-if="validationErrors.datum" class="text-red-500 ml-1 text-xs">{{ validationErrors.datum }}</small>
         </div>
         <div class="flex flex-col gap-1">

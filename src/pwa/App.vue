@@ -27,14 +27,11 @@ onMounted(async () => {
 <template>
   <div class="min-h-screen bg-slate-50">
     <div class="max-w-xl mx-auto p-4 pb-20">
-      <header class="mb-6 pt-4 flex items-center justify-between">
+      <header class="mb-8 pt-4">
         <h1 class="text-xl font-black text-red-600 tracking-tight leading-tight uppercase">
           FFW Rosenfeld<br/>
           <span class="text-slate-800 text-sm">Abt. Brittheim</span>
         </h1>
-        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0 ml-4">
-          B
-        </div>
       </header>
 
       <main>

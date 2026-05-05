@@ -20,6 +20,29 @@ const nextAppointment = computed(() => {
     .sort((a, b) => new Date(a.datum || a.Datum) - new Date(b.datum || b.Datum))[0]
 })
 
+const getTags = (a) => {
+  const tags = new Set()
+  const group = (a.Gruppe || a.gruppe || 'Alle').trim()
+  if (group) tags.add(group)
+  
+  const name = (a.name || a.Name || '').toLowerCase()
+  if (name.includes('jugend') || name.includes('jufeu')) tags.add('Jugend')
+  if (name.includes('zugübung')) tags.add('Zug')
+  if (name.includes('absturzsicherung')) tags.add('Hosi')
+  
+  return tags
+}
+
+const cardStyle = computed(() => {
+  if (!nextAppointment.value) return {}
+  const tags = getTags(nextAppointment.value)
+  
+  if (tags.has('Jugend')) return { bg: 'from-orange-500 to-orange-600', text: 'text-orange-100' }
+  if (tags.has('Zug')) return { bg: 'from-blue-600 to-blue-700', text: 'text-blue-100' }
+  if (tags.has('Hosi')) return { bg: 'from-green-600 to-green-700', text: 'text-green-100' }
+  return { bg: 'from-red-600 to-red-700', text: 'text-red-100' }
+})
+
 function formatDate(dateStr) {
   if (!dateStr) return ''
   return new Date(dateStr).toLocaleDateString('de-DE', {
@@ -34,7 +57,7 @@ function formatDate(dateStr) {
 <template>
   <div v-if="nextAppointment" class="mb-8">
     <h2 class="text-lg font-semibold text-slate-700 mb-3">Nächster Termin</h2>
-    <div class="bg-gradient-to-br from-red-600 to-red-700 text-white p-5 rounded-xl shadow-md">
+    <div :class="['bg-gradient-to-br text-white p-5 rounded-xl shadow-md transition-all duration-500', cardStyle.bg]">
       <div class="flex justify-between items-start mb-2">
         <span class="text-xs font-medium bg-white/20 px-2 py-0.5 rounded uppercase tracking-wider">
           {{ nextAppointment.Gruppe || 'Alle' }}
@@ -42,7 +65,7 @@ function formatDate(dateStr) {
         <span class="text-sm font-medium">{{ formatDate(nextAppointment.datum || nextAppointment.Datum) }}</span>
       </div>
       <h3 class="text-xl font-bold mb-1">{{ nextAppointment.name || nextAppointment.Name }}</h3>
-      <p class="text-red-100 text-sm">{{ nextAppointment.veranstalter || nextAppointment.Organisator }}</p>
+      <p :class="['text-sm transition-colors duration-500', cardStyle.text]">{{ nextAppointment.veranstalter || nextAppointment.Organisator }}</p>
     </div>
   </div>
 </template>

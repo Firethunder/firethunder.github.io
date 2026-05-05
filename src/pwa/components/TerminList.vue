@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { formatShortDate, getWeekday } from '../../utils/date'
+import { getDay, getShortMonth, getWeekday, getYear } from '../../utils/date'
+
+const currentYear = new Date().getFullYear()
 
 const props = defineProps({
   appointments: {
@@ -20,6 +22,30 @@ const getTags = (a) => {
   if (name.includes('absturzsicherung')) tags.add('Hosi')
   
   return tags
+}
+
+const getGroupColor = (group) => {
+  const g = (group || '').toLowerCase()
+  if (g.includes('jugend')) return 'bg-orange-600 border-orange-600'
+  if (g.includes('zug')) return 'bg-blue-600 border-blue-600'
+  if (g.includes('hosi')) return 'bg-green-600 border-green-600'
+  return 'bg-red-600 border-red-600' // Alle / Default
+}
+
+const getGroupBadgeClass = (group) => {
+  const g = (group || '').toLowerCase()
+  if (g.includes('jugend')) return 'bg-orange-50 text-orange-600'
+  if (g.includes('zug')) return 'bg-blue-50 text-blue-600'
+  if (g.includes('hosi')) return 'bg-green-50 text-green-600'
+  return 'bg-red-50 text-red-600'
+}
+
+const getDateTextColor = (termin) => {
+  const tags = getTags(termin)
+  if (tags.has('Jugend')) return 'text-orange-600'
+  if (tags.has('Zug')) return 'text-blue-600'
+  if (tags.has('Hosi')) return 'text-green-600'
+  return 'text-red-600' // Alle / Default
 }
 
 const availableGroups = computed(() => {
@@ -105,8 +131,8 @@ const filteredList = computed(() => {
           @click="toggleFilter(group)"
           :class="['px-3 py-1.5 rounded-full text-xs font-bold transition-all border shadow-sm', 
             activeFilters.has(group) 
-              ? 'bg-red-600 border-red-600 text-white' 
-              : 'bg-white border-slate-200 text-slate-600 hover:border-red-300'
+              ? getGroupColor(group) + ' text-white rounded-full' 
+              : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 rounded-full'
           ]"
         >
           {{ group }}
@@ -125,16 +151,26 @@ const filteredList = computed(() => {
         class="flex items-center bg-white p-3 rounded-lg border border-slate-200 shadow-sm"
       >
         <div class="flex flex-col items-center justify-center w-12 mr-4 border-r border-slate-100 pr-4">
-          <span class="text-[10px] uppercase font-bold text-slate-400">{{ getWeekday(termin.datum || termin.Datum) }}</span>
-          <span class="text-lg font-bold text-slate-700 leading-none">{{ formatShortDate(termin.datum || termin.Datum) }}</span>
+          <span :class="['text-[10px] uppercase font-bold leading-none mb-1', getDateTextColor(termin)]">{{ getWeekday(termin.datum || termin.Datum) }}</span>
+          <span class="text-lg font-black text-slate-800 leading-none">{{ getDay(termin.datum || termin.Datum) }}</span>
+          <div :class="['text-[10px] uppercase font-bold leading-none mt-1 flex flex-col items-center', getDateTextColor(termin)]">
+            <span>{{ getShortMonth(termin.datum || termin.Datum) }}</span>
+            <span class="text-[8px] opacity-70 mt-0.5">
+              '{{ getYear(termin.datum || termin.Datum).toString().slice(-2) }}
+            </span>
+          </div>
         </div>
         <div class="flex-1 min-w-0">
           <h4 class="font-bold text-slate-800 truncate">{{ termin.name || termin.Name }}</h4>
           <p class="text-xs text-slate-500 truncate">{{ termin.veranstalter || termin.Organisator }}</p>
         </div>
-        <div v-if="termin.Gruppe && termin.Gruppe !== 'Alle'" class="ml-2">
-          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 uppercase">
-            {{ termin.Gruppe }}
+        <div class="ml-2 flex flex-wrap gap-1 justify-end">
+          <span 
+            v-for="tag in Array.from(getTags(termin)).filter(t => t !== 'Alle')" 
+            :key="tag"
+            :class="['text-[10px] font-bold px-1.5 py-0.5 rounded uppercase whitespace-nowrap', getGroupBadgeClass(tag)]"
+          >
+            {{ tag }}
           </span>
         </div>
       </div>

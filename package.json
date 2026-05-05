@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/generate-ics.js",
+    "build": "vite build && node scripts/generate-ics.js && npm run build:pwa",
+    "build:pwa": "vite build -c vite.pwa.config.js && powershell.exe -Command \"mkdir -Force dist/app/ffwtool; cp public/ffwtool/termine.json dist/app/ffwtool/; cp public/ffwtool/termine.ics dist/app/ffwtool/\"",
     "preview": "vite preview",
+    "preview:pwa": "vite preview -c vite.pwa.config.js --port 4173 --strictPort",
     "test": "vitest run"
   },
   "dependencies": {
@@ -27,6 +29,7 @@
     "postcss": "^8.5.12",
     "tailwindcss": "^4.2.4",
     "vite": "^6.0.5",
+    "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.1.5"
   }
 }
